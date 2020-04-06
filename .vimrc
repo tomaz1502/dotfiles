@@ -1,16 +1,23 @@
 "basic
-:colorscheme OceanicNext
-:filetype plugin on
-:set rnu
-:set wildmenu
-:set nu
-:set mouse=a
-:set cindent
-:set tabstop=4
-:set expandtab
-:set shiftwidth=4
-:let mapleader=","
-:syntax on
+colorscheme OceanicNext
+filetype plugin on
+set rnu
+set nu
+set mouse=a
+set cindent
+set tabstop=4
+set expandtab
+set shiftwidth=4
+let mapleader=","
+syntax on
+
+
+set wildmenu
+set path+=**
+set hidden
+set wildignore+=**/node_modules/**
+
+nnoremap <Leader>ev :vsp $MYVIMRC<CR>
 
 "status bar
 ":set laststatus=2
