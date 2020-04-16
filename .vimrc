@@ -1,8 +1,7 @@
-"basic
-colorscheme OceanicNext
+colorscheme abstract
 filetype plugin on
-set rnu
 set nu
+set rnu
 set mouse=a
 set cindent
 set tabstop=4
@@ -11,73 +10,98 @@ set shiftwidth=4
 let mapleader=","
 syntax on
 
-
-set wildmenu
-set path+=**
 set hidden
+set wildmenu
 set wildignore+=**/node_modules/**
+set path+=**
 
-nnoremap <Leader>ev :vsp $MYVIMRC<CR>
-
-"status bar
-":set laststatus=2
-
-"Set cursor as a line
-""if has("autocmd")
-""  au VimEnter,InsertLeave * silent execute '!echo -ne "\e[2 q"' | redraw!
-""  au InsertEnter,InsertChange *
-""\ if v:insertmode == 'i' | 
-""\   silent execute '!echo -ne "\e[6 q"' | redraw! |
-""\ elseif v:insertmode == 'r' |
-""\   silent execute '!echo -ne "\e[4 q"' | redraw! |
-""\ endif
-""au VimLeave * silent execute '!echo -ne "\e[ q"' | redraw!
-""endif
-
-"highlight current line
-:nnoremap <Leader>c :set cursorline!<CR>
-
-"One key make and run
-autocmd FileType cpp map <F5> :<C-U>!make %:r && ./%:r
-"autocmd FileType python map <F5> :<C-U>!python3 %:r.py
-"autocmd FileType rust map <F5> :<C-U>!rustc %:r.rs && ./%:r
-"autocmd FileType haskell map <F5> :<C-U>!ghc %:r.hs && ./%:r
-
-autocmd FileType cpp map <F6> :<C-U>!make %:r
-"autocmd FileType rust map <F6> :<C-U>!rustc %:r.rs
-"autocmd FileType haskell map <F6> :<C-U>!ghc %:r.hs
 
 map <F7> :<C-U>!./%:r
-
-"nice maps
 inoremap {<CR> {<CR><ESC>o}<UP><ESC>$a
 inoremap ( ()<left>
 inoremap [ []<left>
 inoremap " ""<left>
 inoremap ' ''<left>
-nnoremap <C-Down> ddp
-nnoremap <C-Up> <Up>ddp<Up>
+nnoremap <C-S-Down> ddp
+nnoremap <C-S-Up> <Up>ddp<Up>
 xnoremap ( xi()<Esc>P
+nnoremap <Up> <Nop>
+nnoremap <Left> <Nop>
+nnoremap <Right> <Nop>
+nnoremap <Down> <Nop>
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
-"Plugin Instalation
-call plug#begin('~/.vim/plugged')
+nnoremap <Leader>c :set cursorline!<CR>
+nnoremap <Leader>ev :vsp ~/.vimrc<CR>
+nnoremap <Leader>es :source ~/.vimrc<CR>
 
-"Plug 'autozimu/LanguageClient-neovim', {
- "   \ 'branch': 'next',
-  "  \ 'do': 'bash install.sh',
-   " \ }
+call plug#begin()
 
-"Plug 'prabirshrestha/async.vim'
-"Plug 'prabirshrestha/vim-lsp'
-"Plug 'mattn/vim-lsp-settings'
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+Plug 'ncm2/ncm2'
+Plug 'roxma/nvim-yarp'
+Plug 'ncm2/ncm2-vim-lsp'
+Plug 'scrooloose/nerdtree'
 
 call plug#end()
 
-"set hidden
+set signcolumn=no
 
-"let g:LanguageClient_serverCommands = {
- "   \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-  "  \ 'cpp' : ['clangd']
-   " \ }
+let g:lsp_diagnostics_enabled = 0
 
-"nnoremap <F2> :call LanguageClient_contextMenu()<CR>
+if executable('clangd-9')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'clangd-9',
+        \ 'cmd': {server_info->['clangd-9']},
+        \ 'whitelist': ['cpp'],
+        \ })
+endif
+
+if executable('pyls')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pyls',
+        \ 'cmd': {server_info->['pyls']},
+        \ 'whitelist': ['python'],
+        \ })
+endif
+
+if executable('rls')
+    au User lsp_setup call lsp#register_server({
+        \ 'name' : 'rls',
+        \ 'cmd' : {server_info->['rls']},
+        \ 'whitelist' : ['rust'],
+        \})
+endif
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+endfunction
+
+nnoremap <C-d> :LspDefinition<CR>
+nnoremap <C-f> :LspHover<CR>
+nnoremap <C-r> :LspReferences<CR>
+
+inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
+
+" Use <TAB> to select the popup menu:
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+"autocmd BufEnter * call ncm2#enable_for_buffer()
+set completeopt=noinsert,menuone,noselect
+set shortmess+=c
+let g:ncm2#complete_length = 3
+
+map <C-t> :NERDTreeToggle<CR>
+let g:ncm2#auto_popup = 0
