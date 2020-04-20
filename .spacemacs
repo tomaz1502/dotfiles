@@ -31,27 +31,27 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     vimscript
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      ivy
-     rust
+     pdf-tools
      auto-completion
+     c-c++
+     python
+     rust
+     haskell
      ;; better-defaults
      emacs-lisp
      git
      ;; markdown
      org
-     haskell
-     c-c++
-     python
-     ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
-     ;; spell-checking
+     (shell :variables
+             shell-default-height 30
+             shell-default-position 'bottom)
+     ;spell-checking
      syntax-checking
      ;; version-control
      )
@@ -59,7 +59,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(org-pdftools solarized-theme lsp-mode lsp-ui)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -299,62 +299,55 @@ values."
    ))
 
 (defun dotspacemacs/user-init ()
-  (setq c-basic-offset 4)
-   (let ((base03    "#002b36")
-        (base02    "#073642")
-        (base01    "#586e75")
-        (base00    "#657b83")
-        (base0     "#839496")
-        (base1     "#93a1a1")
-        (base2     "#eee8d5")
-        (base3     "#fdf6e3")
-        (yellow    "#b58900")
-        (orange    "#cb4b16")
-        (red       "#dc322f")
-        (magenta   "#d33682")
-        (violet    "#6c71c4")
-        (blue      "#268bd2")
-        (cyan      "#2aa198")
-        (green     "#859900"))
-    (custom-set-faces
-     `(agda2-highlight-keyword-face ((t (:foreground ,orange))))
-     `(agda2-highlight-string-face ((t (:foreground ,magenta))))
-     `(agda2-highlight-number-face ((t (:foreground ,violet))))
-     `(agda2-highlight-symbol-face ((((background ,base3)) (:foreground ,base01))))
-     `(agda2-highlight-primitive-type-face ((t (:foreground ,blue))))
-     `(agda2-highlight-bound-variable-face ((t nil)))
-     `(agda2-highlight-inductive-constructor-face ((t (:foreground ,green))))
-     `(agda2-highlight-coinductive-constructor-face ((t (:foreground ,yellow))))
-     `(agda2-highlight-datatype-face ((t (:foreground ,blue))))
-     `(agda2-highlight-field-face ((t (:foreground ,red))))
-     `(agda2-highlight-function-face ((t (:foreground ,blue))))
-     `(agda2-highlight-module-face ((t (:foreground ,violet))))
-     `(agda2-highlight-postulate-face ((t (:foreground ,blue))))
-     `(agda2-highlight-primitive-face ((t (:foreground ,blue))))
-     `(agda2-highlight-record-face ((t (:foreground ,blue))))
-     `(agda2-highlight-dotted-face ((t nil)))
-     `(agda2-highlight-operator-face ((t nil)))
-     `(agda2-highlight-error-face ((t (:foreground ,red :underline t))))
-     `(agda2-highlight-unsolved-meta-face ((t (:background ,base03 :foreground ,yellow))))
-     `(agda2-highlight-unsolved-constraint-face ((t (:background ,base03 :foreground ,yellow))))
-     `(agda2-highlight-termination-problem-face ((t (:background ,orange :foreground ,base03))))
-     `(agda2-highlight-incomplete-pattern-face ((t (:background ,orange :foreground ,base03))))
-     `(agda2-highlight-typechecks-face ((t (:background ,cyan :f
-                                                        oreground ,base03))))))
-
-   (require 'package)
-   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
-   (package-initialize)
-
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init', before layer configuration
 executes.
- This function is mostly useful for variables that need to be set
+ This function is mostly useful for variales that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   )
 
 (defun dotspacemacs/user-config ()
+  (setq dotspacemacs-mode-line-theme 'vanilla)
+  (setq c-basic-offset 4)
+  (use-package org-pdftools
+   :hook (org-load . org-pdftools-setup-link))
+  (set-face-attribute 'default nil :height 130)
+  (use-package lsp-mode
+    :ensure t
+    :commands lsp
+    :custom
+    (lsp-auto-guess-root nil)
+    (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
+    :bind (:map lsp-mode-map
+                ("C-c C-f" . lsp-format-buffer)
+                ("C-c d" . lsp-find-definition)
+                ("C-c r" . lsp-find-references)
+                )
+    :hook (((python-mode) . lsp)
+           ((c++-mode) . lsp)
+           ((rust-mode) . lsp)
+           )
+    )
+
+
+  (use-package lsp-ui
+    :after lsp-mode
+    :diminish
+    :commands lsp-ui-mode
+    :custom-face
+    :bind (:map lsp-ui-mode-map
+                ("C-c u" . lsp-ui-imenu))
+    :custom
+    (lsp-ui-doc-enable nil)
+    (lsp-ui-sideline-enable t)
+    (lsp-ui-sideline-ignore-duplicate t)
+    (lsp-ui-sideline-show-code-actions nil)
+    )
+
+  (setq lsp-clangd-executable "clangd-9")
+  (setq lsp-clients-clangd-executable "clangd-9")
+
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
 layers configuration.
@@ -370,38 +363,25 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+   ["#d2ceda" "#f2241f" "#67b11d" "#b1951d" "#3a81c3" "#a31db1" "#21b8c7" "#655370"])
  '(custom-safe-themes
    (quote
-    ("7f1d414afda803f3244c6fb4c2c64bea44dac040ed3731ec9d75275b9e831fe5" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "2809bcb77ad21312897b541134981282dc455ccd7c14d74cc333b6e549b824f3" default)))
+    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "7f1d414afda803f3244c6fb4c2c64bea44dac040ed3731ec9d75275b9e831fe5" "2809bcb77ad21312897b541134981282dc455ccd7c14d74cc333b6e549b824f3" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
  '(evil-want-Y-yank-to-eol nil)
+ '(lsp-auto-guess-root nil)
+ '(lsp-prefer-flymake nil t)
+ '(lsp-ui-doc-enable nil t)
+ '(lsp-ui-sideline-enable t t)
+ '(lsp-ui-sideline-ignore-duplicate t t)
+ '(lsp-ui-sideline-show-code-actions nil t)
  '(package-selected-packages
    (quote
-    (vimrc-mode dactyl-mode smeargle orgit magit-gitflow magit-popup gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit git-commit with-editor transient toml-mode racer flycheck-rust cargo markdown-mode rust-mode solarized-theme intero hlint-refactor hindent haskell-snippets flycheck-haskell company-ghci company-ghc ghc haskell-mode company-cabal cmm-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download live-py-mode hy-mode dash-functional htmlize gnuplot fuzzy flycheck-pos-tip pos-tip flycheck disaster cython-mode company-statistics company-c-headers company-anaconda company cmake-mode clang-format auto-yasnippet yasnippet anaconda-mode pythonic ac-ispell auto-complete spinner evil-visualstar evil-visual-mark-mode evil-tutor evil-surround evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state iedit evil-exchange evil-ediff evil-args evil-anzu anzu evil undo-tree adaptive-wrap ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smex smartparens restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra indent-guide hydra lv hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-make google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-unimpaired evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-escape goto-chg eval-sexp-fu elisp-slime-nav dumb-jump popup f dash s diminish define-word counsel-projectile projectile pkg-info epl counsel swiper ivy column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed async aggressive-indent ace-window ace-link avy))))
+    (spaceline powerline lsp-ui lsp-mode solarized-theme yapfify xterm-color toml-mode smeargle shell-pop racer pyvenv pytest pyenv-mode py-isort pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download multi-term magit-gitflow magit-popup live-py-mode intero hy-mode dash-functional htmlize hlint-refactor hindent haskell-snippets gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link flycheck-rust flycheck-pos-tip pos-tip flycheck-haskell flycheck evil-magit magit git-commit with-editor transient eshell-z eshell-prompt-extras esh-help disaster cython-mode company-ghci company-ghc ghc haskell-mode company-cabal company-c-headers company-anaconda cmm-mode cmake-mode clang-format cargo markdown-mode rust-mode auto-dictionary anaconda-mode pythonic python-mode org-pdftools fuzzy company-statistics company auto-yasnippet yasnippet auto-complete tablist pdf-tools ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra indent-guide hydra lv hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-make google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu elisp-slime-nav dumb-jump popup f dash s diminish define-word counsel-projectile projectile pkg-info epl counsel swiper ivy column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed async aggressive-indent adaptive-wrap ace-window ace-link avy))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(agda2-highlight-bound-variable-face ((t nil)))
- '(agda2-highlight-coinductive-constructor-face ((t (:foreground "#b58900"))))
- '(agda2-highlight-datatype-face ((t (:foreground "#268bd2"))))
- '(agda2-highlight-dotted-face ((t nil)))
- '(agda2-highlight-error-face ((t (:foreground "#dc322f" :underline t))))
- '(agda2-highlight-field-face ((t (:foreground "#dc322f"))))
- '(agda2-highlight-function-face ((t (:foreground "#268bd2"))))
- '(agda2-highlight-incomplete-pattern-face ((t (:background "#cb4b16" :foreground "#002b36"))))
- '(agda2-highlight-inductive-constructor-face ((t (:foreground "#859900"))))
- '(agda2-highlight-keyword-face ((t (:foreground "#cb4b16"))))
- '(agda2-highlight-module-face ((t (:foreground "#6c71c4"))))
- '(agda2-highlight-number-face ((t (:foreground "#6c71c4"))))
- '(agda2-highlight-operator-face ((t nil)))
- '(agda2-highlight-postulate-face ((t (:foreground "#268bd2"))))
- '(agda2-highlight-primitive-face ((t (:foreground "#268bd2"))))
- '(agda2-highlight-primitive-type-face ((t (:foreground "#268bd2"))))
- '(agda2-highlight-record-face ((t (:foreground "#268bd2"))))
- '(agda2-highlight-string-face ((t (:foreground "#d33682"))))
- '(agda2-highlight-symbol-face ((((background "#fdf6e3")) (:foreground "#586e75"))))
- '(agda2-highlight-termination-problem-face ((t (:background "#cb4b16" :foreground "#002b36"))))
- '(agda2-highlight-typechecks-face ((t (:background "#2aa198" :f oreground "#002b36"))))
- '(agda2-highlight-unsolved-constraint-face ((t (:background "#002b36" :foreground "#b58900"))))
- '(agda2-highlight-unsolved-meta-face ((t (:background "#002b36" :foreground "#b58900")))))
+ '(lsp-ui-doc-background ((t (:background nil))))
+ '(lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic))))))

@@ -52,7 +52,7 @@ call plug#end()
 
 set signcolumn=no
 
-let g:lsp_diagnostics_enabled = 0
+let g:lsp_diagnostics_enabled = 1
 
 if executable('clangd-9')
     au User lsp_setup call lsp#register_server({
@@ -105,3 +105,5 @@ let g:ncm2#complete_length = 3
 
 map <C-t> :NERDTreeToggle<CR>
 let g:ncm2#auto_popup = 0
+
+highlight LspErrorHighlight ctermfg=yellow guifg=red ctermbg=green guibg=green
