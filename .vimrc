@@ -15,12 +15,16 @@ Plug 'scrooloose/nerdtree'
 Plug 'wincent/command-t', {
  \    'do' : 'cd ruby/command-t/ext/command-t && ruby extconf.rb && make'
  \ }
+Plug 'chriskempson/base16-vim'
 
 call plug#end()
 "}}}
 
 "Fundamentals {{{
-colorscheme abstract
+"colorscheme abstract
+"colorscheme base16-dracula
+"colorscheme base16-gruvbox-dark-hard
+colorscheme base16-atelier-forest
 filetype plugin on
 
 set nu
@@ -37,6 +41,7 @@ set hidden
 set wildmenu
 set signcolumn=no
 set foldmethod=marker
+set termguicolors
 ""set wildignore+=**/node_modules/**
 ""set path+=**
 "}}}
