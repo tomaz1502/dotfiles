@@ -1,5 +1,29 @@
+" VIMRC FILE
+" GitHub : https://github.com/tomaz1502/dotfiles/blob/master/.vimrc
+
+"Plugins {{{
+call plug#begin()
+
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+Plug 'ncm2/ncm2'
+Plug 'roxma/nvim-yarp'
+Plug 'ncm2/ncm2-vim-lsp'
+Plug 'scrooloose/nerdtree'
+
+Plug 'wincent/command-t', {
+ \    'do' : 'cd ruby/command-t/ext/command-t && ruby extconf.rb && make'
+ \ }
+
+call plug#end()
+
+"}}}
+
+"Fundamentals {{{
 colorscheme abstract
 filetype plugin on
+
 set nu
 set rnu
 set mouse=a
@@ -12,10 +36,14 @@ syntax on
 
 set hidden
 set wildmenu
-set wildignore+=**/node_modules/**
-set path+=**
+set signcolumn=no
+set foldmethod=marker
+""set wildignore+=**/node_modules/**
+""set path+=**
 
+"}}}
 
+" All Maps {{{
 map <F7> :<C-U>!./%:r
 inoremap {<CR> {<CR><ESC>o}<UP><ESC>$a
 inoremap ( ()<left>
@@ -38,22 +66,22 @@ nnoremap <Leader>c :set cursorline!<CR>
 nnoremap <Leader>ev :vsp ~/.vimrc<CR>
 nnoremap <Leader>es :source ~/.vimrc<CR>
 
-call plug#begin()
+nnoremap <Leader>s :let g:lsp_diagnostics_enabled = 1<CR>
+nnoremap <Leader>S :let g:lsp_diagnostics_enabled = 0<CR>
 
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'mattn/vim-lsp-settings'
-Plug 'ncm2/ncm2'
-Plug 'roxma/nvim-yarp'
-Plug 'ncm2/ncm2-vim-lsp'
-Plug 'scrooloose/nerdtree'
+nnoremap <C-d> :LspDefinition<CR>
+nnoremap <C-f> :LspHover<CR>
+nnoremap <C-r> :LspReferences<CR>
 
-call plug#end()
+map <C-t> :NERDTreeToggle<CR>
+map <Leader>t :CommandT ~/Desktop/Tom/<CR>
+map <Leader>T :CommandTHelp<CR>
 
-set signcolumn=no
+nnoremap <Space> za
 
-let g:lsp_diagnostics_enabled = 1
+"}}}
 
+"LSP Stuff {{{
 if executable('clangd-9')
     au User lsp_setup call lsp#register_server({
         \ 'name': 'clangd-9',
@@ -84,26 +112,23 @@ augroup lsp_install
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
 
+"}}}
+
+"Auto Complete (NCM2) {{{
 function! s:on_lsp_buffer_enabled() abort
     setlocal omnifunc=lsp#complete
 endfunction
-
-nnoremap <C-d> :LspDefinition<CR>
-nnoremap <C-f> :LspHover<CR>
-nnoremap <C-r> :LspReferences<CR>
-
 inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
+let g:ncm2#auto_popup = 1
 
 " Use <TAB> to select the popup menu:
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-"autocmd BufEnter * call ncm2#enable_for_buffer()
+autocmd BufEnter * call ncm2#enable_for_buffer()
 set completeopt=noinsert,menuone,noselect
 set shortmess+=c
 let g:ncm2#complete_length = 3
 
-map <C-t> :NERDTreeToggle<CR>
-let g:ncm2#auto_popup = 0
+""}}}
 
-highlight LspErrorHighlight ctermfg=yellow guifg=red ctermbg=green guibg=green
