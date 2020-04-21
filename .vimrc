@@ -17,7 +17,6 @@ Plug 'wincent/command-t', {
  \ }
 
 call plug#end()
-
 "}}}
 
 "Fundamentals {{{
@@ -40,7 +39,6 @@ set signcolumn=no
 set foldmethod=marker
 ""set wildignore+=**/node_modules/**
 ""set path+=**
-
 "}}}
 
 " All Maps {{{
@@ -77,8 +75,7 @@ map <C-t> :NERDTreeToggle<CR>
 map <Leader>t :CommandT ~/Desktop/Tom/<CR>
 map <Leader>T :CommandTHelp<CR>
 
-nnoremap <Space> za
-
+nnoremap <Tab> za
 "}}}
 
 "LSP Stuff {{{
@@ -111,7 +108,6 @@ augroup lsp_install
     " call s:on_lsp_buffer_enabled only for languages that has the server registered.
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
-
 "}}}
 
 "Auto Complete (NCM2) {{{
@@ -129,6 +125,4 @@ autocmd BufEnter * call ncm2#enable_for_buffer()
 set completeopt=noinsert,menuone,noselect
 set shortmess+=c
 let g:ncm2#complete_length = 3
-
 ""}}}
-
