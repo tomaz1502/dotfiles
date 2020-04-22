@@ -30,28 +30,27 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(python
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     ivy
-     pdf-tools
-     auto-completion
-     c-c++
-     python
      rust
-     haskell
+     latex
+     helm
+     ;; ivy
+     auto-completion
      ;; better-defaults
      emacs-lisp
      git
+     lsp
      ;; markdown
-     org
-     (shell :variables
-             shell-default-height 30
-             shell-default-position 'bottom)
-     ;spell-checking
+     ;; org
+     ;; (shell :variables
+     ;;        shell-default-height 30
+     ;;        shell-default-position 'bottom)
+     ;; spell-checking
      syntax-checking
      ;; version-control
      )
@@ -59,7 +58,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(org-pdftools solarized-theme lsp-mode lsp-ui)
+   dotspacemacs-additional-packages '(pdf-tools solarized-theme neotree org-pdftools)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -79,7 +78,9 @@ This function is called at the very startup of Spacemacs initialization
 before layers configuration.
 You should not put any user code in there besides modifying the variable
 values."
-  ;; This setq-default sexp is an exhaustive list of all the supported
+
+  (setq dotspacemacs-mode-line-theme 'vanilla)
+    ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
    ;; If non nil ELPA repositories are contacted via HTTPS whenever it's
@@ -132,7 +133,8 @@ values."
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(spacemacs-dark
-                         spacemacs-light)
+                         wombat
+                         solarized-dark-high-contrast)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
@@ -302,17 +304,23 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init', before layer configuration
 executes.
- This function is mostly useful for variales that need to be set
+ This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+  (setq c-basic-offset 4)
+
   )
 
 (defun dotspacemacs/user-config ()
-  (setq dotspacemacs-mode-line-theme 'vanilla)
-  (setq c-basic-offset 4)
+  "Configuration function for user code.
+This function is called at the very end of Spacemacs initialization after
+layers configuration.
+This is the place where most of your configurations should be done. Unless it is
+explicitly specified that a variable should be set before a package is loaded,
+you should place your code here."
+  ;; (setq org-format-latex-options :scale 2.0)
   (use-package org-pdftools
-   :hook (org-load . org-pdftools-setup-link))
-  (set-face-attribute 'default nil :height 130)
+    :hook (org-load . org-pdftools-setup-link))
   (use-package lsp-mode
     :ensure t
     :commands lsp
@@ -348,12 +356,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (setq lsp-clangd-executable "clangd-9")
   (setq lsp-clients-clangd-executable "clangd-9")
 
-  "Configuration function for user code.
-This function is called at the very end of Spacemacs initialization after
-layers configuration.
-This is the place where most of your configurations should be done. Unless it is
-explicitly specified that a variable should be set before a package is loaded,
-you should place your code here."
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -363,25 +366,123 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   ["#d2ceda" "#f2241f" "#67b11d" "#b1951d" "#3a81c3" "#a31db1" "#21b8c7" "#655370"])
- '(custom-safe-themes
-   (quote
-    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "7f1d414afda803f3244c6fb4c2c64bea44dac040ed3731ec9d75275b9e831fe5" "2809bcb77ad21312897b541134981282dc455ccd7c14d74cc333b6e549b824f3" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
- '(evil-want-Y-yank-to-eol nil)
- '(lsp-auto-guess-root nil)
- '(lsp-prefer-flymake nil t)
- '(lsp-ui-doc-enable nil t)
- '(lsp-ui-sideline-enable t t)
- '(lsp-ui-sideline-ignore-duplicate t t)
- '(lsp-ui-sideline-show-code-actions nil t)
  '(package-selected-packages
    (quote
-    (spaceline powerline lsp-ui lsp-mode solarized-theme yapfify xterm-color toml-mode smeargle shell-pop racer pyvenv pytest pyenv-mode py-isort pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download multi-term magit-gitflow magit-popup live-py-mode intero hy-mode dash-functional htmlize hlint-refactor hindent haskell-snippets gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link flycheck-rust flycheck-pos-tip pos-tip flycheck-haskell flycheck evil-magit magit git-commit with-editor transient eshell-z eshell-prompt-extras esh-help disaster cython-mode company-ghci company-ghc ghc haskell-mode company-cabal company-c-headers company-anaconda cmm-mode cmake-mode clang-format cargo markdown-mode rust-mode auto-dictionary anaconda-mode pythonic python-mode org-pdftools fuzzy company-statistics company auto-yasnippet yasnippet auto-complete tablist pdf-tools ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra indent-guide hydra lv hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-make google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu elisp-slime-nav dumb-jump popup f dash s diminish define-word counsel-projectile projectile pkg-info epl counsel swiper ivy column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed async aggressive-indent adaptive-wrap ace-window ace-link avy))))
+    (helm-themes helm-swoop helm-projectile helm-mode-manager helm-flx helm-descbinds helm-ag ace-jump-helm-line helm helm-core org-plus-contrib ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra indent-guide hydra lv hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-make google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu elisp-slime-nav dumb-jump popup f dash s diminish define-word counsel-projectile projectile pkg-info epl counsel swiper ivy column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed async aggressive-indent adaptive-wrap ace-window ace-link avy))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(lsp-ui-doc-background ((t (:background nil))))
- '(lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic))))))
+ )
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(compilation-message-face (quote default))
+ '(cua-global-mark-cursor-color "#3cafa5")
+ '(cua-normal-cursor-color "#8d9fa1")
+ '(cua-overwrite-cursor-color "#c49619")
+ '(cua-read-only-cursor-color "#93a61a")
+ '(custom-safe-themes
+   (quote
+    ("7f1d414afda803f3244c6fb4c2c64bea44dac040ed3731ec9d75275b9e831fe5" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "2809bcb77ad21312897b541134981282dc455ccd7c14d74cc333b6e549b824f3" default)))
+ '(evil-want-Y-yank-to-eol nil)
+ '(fci-rule-color "#01323d")
+ '(highlight-changes-colors (quote ("#e2468f" "#7a7ed2")))
+ '(highlight-symbol-colors
+   (quote
+    ("#3c2d404d3269" "#0c3545b04c96" "#4821335d34fc" "#1f853baf5636" "#2e95436932f0" "#44503571311b" "#0af140da592d")))
+ '(highlight-symbol-foreground-color "#9eacac")
+ '(highlight-tail-colors
+   (quote
+    (("#01323d" . 0)
+     ("#687f00" . 20)
+     ("#008981" . 30)
+     ("#0069b0" . 50)
+     ("#936d00" . 60)
+     ("#a72e01" . 70)
+     ("#a81761" . 85)
+     ("#01323d" . 100))))
+ '(hl-bg-colors
+   (quote
+    ("#936d00" "#a72e01" "#ae1212" "#a81761" "#3548a2" "#0069b0" "#008981" "#687f00")))
+ '(hl-fg-colors
+   (quote
+    ("#002732" "#002732" "#002732" "#002732" "#002732" "#002732" "#002732" "#002732")))
+ '(hl-paren-colors (quote ("#3cafa5" "#c49619" "#3c98e0" "#7a7ed2" "#93a61a")))
+ '(hl-todo-keyword-faces
+   (quote
+    (("TODO" . "#dc752f")
+     ("NEXT" . "#dc752f")
+     ("THEM" . "#2d9574")
+     ("PROG" . "#3a81c3")
+     ("OKAY" . "#3a81c3")
+     ("DONT" . "#f2241f")
+     ("FAIL" . "#f2241f")
+     ("DONE" . "#42ae2c")
+     ("NOTE" . "#b1951d")
+     ("KLUDGE" . "#b1951d")
+     ("HACK" . "#b1951d")
+     ("TEMP" . "#b1951d")
+     ("FIXME" . "#dc752f")
+     ("XXX+" . "#dc752f")
+     ("\\?\\?\\?+" . "#dc752f"))))
+ '(lsp-auto-guess-root nil)
+ '(lsp-prefer-flymake nil t)
+ '(lsp-ui-doc-border "#9eacac")
+ '(nrepl-message-colors
+   (quote
+    ("#ec423a" "#db5823" "#c49619" "#687f00" "#c3d255" "#0069b0" "#3cafa5" "#e2468f" "#7a7ed2")))
+ '(package-selected-packages
+   (quote
+    (yapfify stickyfunc-enhance pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements lsp-python-ms live-py-mode importmagic epc ctable concurrent deferred helm-pydoc helm-gtags helm-cscope xcscope ggtags dap-mode bui cython-mode counsel-gtags company-anaconda blacken anaconda-mode pythonic helm-themes helm-swoop helm-projectile helm-mode-manager helm-flx helm-descbinds helm-ag ace-jump-helm-line helm helm-core org-plus-contrib ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra indent-guide hydra lv hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-make google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu elisp-slime-nav dumb-jump popup f dash s diminish define-word counsel-projectile projectile pkg-info epl counsel swiper ivy column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed async aggressive-indent adaptive-wrap ace-window ace-link avy)))
+ '(pdf-view-midnight-colors (quote ("#655370" . "#fbf8ef")))
+ '(pos-tip-background-color "#01323d")
+ '(pos-tip-foreground-color "#9eacac")
+ '(smartrep-mode-line-active-bg (solarized-color-blend "#93a61a" "#01323d" 0.2))
+ '(term-default-bg-color "#002732")
+ '(term-default-fg-color "#8d9fa1")
+ '(vc-annotate-background nil)
+ '(vc-annotate-background-mode nil)
+ '(vc-annotate-color-map
+   (quote
+    ((20 . "#ec423a")
+     (40 . "#d9f473492d7b")
+     (60 . "#cf90859324ec")
+     (80 . "#c49619")
+     (100 . "#b4a69be61924")
+     (120 . "#acaa9e9f1949")
+     (140 . "#a46ea134197a")
+     (160 . "#9be5a3a919b7")
+     (180 . "#93a61a")
+     (200 . "#8431a8ba525c")
+     (220 . "#79d1aa2e67f9")
+     (240 . "#6c4cabb57ca2")
+     (260 . "#59a8ad4f90e3")
+     (280 . "#3cafa5")
+     (300 . "#4181a5e9bcb7")
+     (320 . "#4191a150c87d")
+     (340 . "#3fd09cadd43f")
+     (360 . "#3c98e0"))))
+ '(vc-annotate-very-old-color nil)
+ '(weechat-color-list
+   (quote
+    (unspecified "#002732" "#01323d" "#ae1212" "#ec423a" "#687f00" "#93a61a" "#936d00" "#c49619" "#0069b0" "#3c98e0" "#a81761" "#e2468f" "#008981" "#3cafa5" "#8d9fa1" "#60767e")))
+ '(xterm-color-names
+   ["#01323d" "#ec423a" "#93a61a" "#c49619" "#3c98e0" "#e2468f" "#3cafa5" "#faf3e0"])
+ '(xterm-color-names-bright
+   ["#002732" "#db5823" "#62787f" "#60767e" "#8d9fa1" "#7a7ed2" "#9eacac" "#ffffee"]))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+)
