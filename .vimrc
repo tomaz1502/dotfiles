@@ -12,23 +12,30 @@ Plug 'roxma/nvim-yarp'
 Plug 'ncm2/ncm2-vim-lsp'
 Plug 'scrooloose/nerdtree'
 
+Plug 'wincent/ferret'
 Plug 'wincent/command-t', {
  \    'do' : 'cd ruby/command-t/ext/command-t && ruby extconf.rb && make'
  \ }
 Plug 'chriskempson/base16-vim'
+Plug 'dense-analysis/ale'
+
+Plug 'xolox/vim-notes'
+Plug 'xolox/vim-misc'
 
 call plug#end()
 "}}}
 
 "Fundamentals {{{
+
 "colorscheme abstract
 "colorscheme base16-dracula
 "colorscheme base16-gruvbox-dark-hard
-colorscheme base16-atelier-forest
+"colorscheme base16-atelier-forest
+colorscheme base16-default-dark
 filetype plugin on
 
-set nu
-set rnu
+set number
+set relativenumber
 set mouse=a
 set cindent
 set tabstop=4
@@ -44,6 +51,7 @@ set foldmethod=marker
 set termguicolors
 ""set wildignore+=**/node_modules/**
 ""set path+=**
+
 "}}}
 
 " All Maps {{{
@@ -69,15 +77,11 @@ nnoremap <Leader>c :set cursorline!<CR>
 nnoremap <Leader>ev :vsp ~/.vimrc<CR>
 nnoremap <Leader>es :source ~/.vimrc<CR>
 
-nnoremap <Leader>s :let g:lsp_diagnostics_enabled = 1<CR>
-nnoremap <Leader>S :let g:lsp_diagnostics_enabled = 0<CR>
-
 nnoremap <C-d> :LspDefinition<CR>
 nnoremap <C-f> :LspHover<CR>
 nnoremap <C-r> :LspReferences<CR>
 
 map <C-t> :NERDTreeToggle<CR>
-map <Leader>t :CommandT ~/Desktop/Tom/<CR>
 map <Leader>T :CommandTHelp<CR>
 
 nnoremap <Tab> za
@@ -113,6 +117,8 @@ augroup lsp_install
     " call s:on_lsp_buffer_enabled only for languages that has the server registered.
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
+
+let g:lsp_diagnostics_enabled=0 "let's use ALE for syntax check :)
 "}}}
 
 "Auto Complete (NCM2) {{{
@@ -126,8 +132,11 @@ let g:ncm2#auto_popup = 1
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-autocmd BufEnter * call ncm2#enable_for_buffer()
+""autocmd BufEnter * call ncm2#enable_for_buffer()
 set completeopt=noinsert,menuone,noselect
 set shortmess+=c
 let g:ncm2#complete_length = 3
 ""}}}
+
+"StatusLine (TODO) {{{
+"}}}
