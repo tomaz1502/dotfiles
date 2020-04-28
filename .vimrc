@@ -26,7 +26,6 @@ call plug#end()
 "}}}
 
 "Fundamentals {{{
-
 "colorscheme abstract
 "colorscheme base16-dracula
 "colorscheme base16-gruvbox-dark-hard
@@ -52,6 +51,7 @@ set termguicolors
 ""set wildignore+=**/node_modules/**
 ""set path+=**
 
+highlight Search guibg='NONE' guifg='NONE'
 "}}}
 
 " All Maps {{{
@@ -127,16 +127,19 @@ function! s:on_lsp_buffer_enabled() abort
 endfunction
 inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
 let g:ncm2#auto_popup = 1
+let g:ncm2#popup_limit = 5
+let g:ncm2#popup_delay = 1300 
+let g:ncm2#complete_length = 3
 
 " Use <TAB> to select the popup menu:
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-""autocmd BufEnter * call ncm2#enable_for_buffer()
+autocmd BufEnter * call ncm2#enable_for_buffer()
 set completeopt=noinsert,menuone,noselect
 set shortmess+=c
-let g:ncm2#complete_length = 3
-""}}}
+au TextChangedI * call ncm2#auto_trigger()
+"}}}
 
 "StatusLine (TODO) {{{
 "}}}
