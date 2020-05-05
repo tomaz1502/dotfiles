@@ -22,6 +22,9 @@ Plug 'dense-analysis/ale'
 Plug 'xolox/vim-notes'
 Plug 'xolox/vim-misc'
 
+Plug 'itchyny/lightline.vim'
+Plug 'itchyny/vim-gitbranch'
+
 call plug#end()
 "}}}
 
@@ -128,18 +131,30 @@ endfunction
 inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
 let g:ncm2#auto_popup = 1
 let g:ncm2#popup_limit = 5
-let g:ncm2#popup_delay = 1300 
+"let g:ncm2#popup_delay = 1300 
 let g:ncm2#complete_length = 3
 
 " Use <TAB> to select the popup menu:
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-autocmd BufEnter * call ncm2#enable_for_buffer()
+"autocmd BufEnter * call ncm2#enable_for_buffer()
 set completeopt=noinsert,menuone,noselect
 set shortmess+=c
 au TextChangedI * call ncm2#auto_trigger()
 "}}}
 
-"StatusLine (TODO) {{{
+"Light Line {{{
+
+let g:lightline = {
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'gitbranch#name'
+      \ },
+      \ }
+
+set noshowmode "because of lightline
 "}}}
