@@ -17,7 +17,6 @@ Plug 'wincent/command-t', {
  \    'do' : 'cd ruby/command-t/ext/command-t && ruby extconf.rb && make'
  \ }
 Plug 'chriskempson/base16-vim'
-Plug 'dense-analysis/ale'
 
 Plug 'xolox/vim-notes'
 Plug 'xolox/vim-misc'
@@ -25,10 +24,13 @@ Plug 'xolox/vim-misc'
 Plug 'itchyny/lightline.vim'
 Plug 'itchyny/vim-gitbranch'
 
+Plug 'dense-analysis/ale'
+Plug 'maximbaz/lightline-ale'
+
 call plug#end()
 "}}}
 
-"Fundamentals {{{
+"Fundamentals {{{      
 "colorscheme abstract
 "colorscheme base16-dracula
 "colorscheme base16-gruvbox-dark-hard
@@ -77,12 +79,12 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
 nnoremap <Leader>c :set cursorline!<CR>
-nnoremap <Leader>ev :vsp ~/.vimrc<CR>
-nnoremap <Leader>es :source ~/.vimrc<CR>
+nnoremap <Leader>ev :vsp ~/Desktop/Tom/Stuff/dotfiles/.vimrc<CR>
+nnoremap <Leader>es :source ~/Desktop/Tom/Stuff/dotfiles/.vimrc<CR>
 
-nnoremap <C-d> :LspDefinition<CR>
-nnoremap <C-f> :LspHover<CR>
-nnoremap <C-r> :LspReferences<CR>
+nnoremap gd :LspDefinition<CR>
+nnoremap K :LspHover<CR>
+nnoremap gr :LspReferences<CR>
 
 map <C-t> :NERDTreeToggle<CR>
 map <Leader>T :CommandTHelp<CR>
@@ -91,13 +93,14 @@ nnoremap <Tab> za
 "}}}
 
 "LSP Stuff {{{
-if executable('clangd-9')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'clangd-9',
-        \ 'cmd': {server_info->['clangd-9']},
-        \ 'whitelist': ['cpp'],
-        \ })
-endif
+
+"if executable('clangd-9')
+"    au User lsp_setup call lsp#register_server({
+"        \ 'name': 'clangd-9',
+"        \ 'cmd': {server_info->['clangd-9']},
+"        \ 'whitelist': ['cpp'],
+"        \ })
+"endif
 
 if executable('pyls')
     au User lsp_setup call lsp#register_server({
@@ -121,7 +124,7 @@ augroup lsp_install
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
 
-let g:lsp_diagnostics_enabled=0 "let's use ALE for syntax check :)
+let g:lsp_diagnostics_enabled=0
 "}}}
 
 "Auto Complete (NCM2) {{{
@@ -138,7 +141,7 @@ let g:ncm2#complete_length = 3
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-"autocmd BufEnter * call ncm2#enable_for_buffer()
+autocmd BufEnter * call ncm2#enable_for_buffer()
 set completeopt=noinsert,menuone,noselect
 set shortmess+=c
 au TextChangedI * call ncm2#auto_trigger()
@@ -158,3 +161,16 @@ let g:lightline = {
 
 set noshowmode "because of lightline
 "}}}
+
+" ALE Options {{{
+
+let g:ale_open_list=0
+let g:ale_lint_on_text_changed=1
+let g:ale_lint_on_insert_leave=0
+let g:ale_lint_on_save=0
+let g:ale_lint_delay=1000
+let g:ale_virtualtext_cursor=1
+let g:ale_virtualtext_prefix="      >>> "
+highlight ALEVirtualTextError guifg=Red
+
+" }}} 
