@@ -174,6 +174,7 @@ let g:ale_lint_delay=1000
 let g:ale_virtualtext_cursor=1
 let g:ale_virtualtext_prefix="      >>> "
 highlight ALEVirtualTextError guifg=DarkRed
+highlight ALEVirtualTextWarning guifg=DarkYellow
 
 " }}} 
 
