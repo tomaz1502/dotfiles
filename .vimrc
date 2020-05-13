@@ -25,6 +25,8 @@ Plug 'itchyny/lightline.vim'
 Plug 'itchyny/vim-gitbranch'
 Plug 'dense-analysis/ale'
 
+Plug 'junegunn/goyo.vim'
+
 call plug#end()
 "}}}
 
@@ -145,7 +147,7 @@ set shortmess+=c
 au TextChangedI * call ncm2#auto_trigger()
 "}}}
 
-"Light Line {{{
+"Light Line Options {{{
 
 let g:lightline = {
       \ 'active': {
@@ -172,3 +174,22 @@ let g:ale_virtualtext_prefix="      >>> "
 highlight ALEVirtualTextError guifg=DarkRed
 
 " }}} 
+
+" Goyo (Hide tmux status bar) {{{
+
+function! s:goyo_enter()
+    if exists('$TMUX')
+        silent !tmux set status off
+    endif
+endfunction
+
+function! s:goyo_leave()
+    if exists('$TMUX')
+        silent !tmux set status on
+    endif
+endfunction
+
+autocmd! User GoyoEnter nested call <SID>goyo_enter()
+autocmd! User GoyoLeave nested call <SID>goyo_leave()
+
+"}}}
