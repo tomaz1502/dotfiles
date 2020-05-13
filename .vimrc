@@ -26,6 +26,7 @@ Plug 'itchyny/vim-gitbranch'
 Plug 'dense-analysis/ale'
 
 Plug 'junegunn/goyo.vim'
+Plug 'tpope/vim-commentary'
 
 call plug#end()
 "}}}
@@ -145,6 +146,7 @@ autocmd BufEnter * call ncm2#enable_for_buffer()
 set completeopt=noinsert,menuone,noselect
 set shortmess+=c
 au TextChangedI * call ncm2#auto_trigger()
+
 "}}}
 
 "Light Line Options {{{
