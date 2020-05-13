@@ -23,9 +23,7 @@ Plug 'xolox/vim-misc'
 
 Plug 'itchyny/lightline.vim'
 Plug 'itchyny/vim-gitbranch'
-
 Plug 'dense-analysis/ale'
-Plug 'maximbaz/lightline-ale'
 
 call plug#end()
 "}}}
@@ -79,8 +77,8 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
 nnoremap <Leader>c :set cursorline!<CR>
-nnoremap <Leader>ev :vsp ~/Desktop/Tom/Stuff/dotfiles/.vimrc<CR>
-nnoremap <Leader>es :source ~/Desktop/Tom/Stuff/dotfiles/.vimrc<CR>
+nnoremap <Leader>ev :vsp ~/Tom/dotfiles/.vimrc<CR>
+nnoremap <Leader>es :source ~/Tom/dotfiles/.vimrc<CR>
 
 nnoremap gd :LspDefinition<CR>
 nnoremap K :LspHover<CR>
@@ -171,6 +169,6 @@ let g:ale_lint_on_save=0
 let g:ale_lint_delay=1000
 let g:ale_virtualtext_cursor=1
 let g:ale_virtualtext_prefix="      >>> "
-highlight ALEVirtualTextError guifg=Red
+highlight ALEVirtualTextError guifg=DarkRed
 
 " }}} 
