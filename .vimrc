@@ -57,6 +57,15 @@ set termguicolors
 ""set wildignore+=**/node_modules/**
 ""set path+=**
 
+if exists('$SUDO_USER')
+    set nobackup
+    set nowritebackup
+else
+    set backupdir=~/local/.vim/tmp/backup
+    set backupdir+=~/.vim/tmp/backup
+    set backupdir+=.
+endif
+
 highlight Search guibg='NONE' guifg='NONE'
 "}}}
 
@@ -95,13 +104,13 @@ nnoremap <Tab> za
 
 "LSP Stuff {{{
 
-"if executable('clangd-9')
-"    au User lsp_setup call lsp#register_server({
-"        \ 'name': 'clangd-9',
-"        \ 'cmd': {server_info->['clangd-9']},
-"        \ 'whitelist': ['cpp'],
-"        \ })
-"endif
+" if executable('clangd-9')
+"     au User lsp_setup call lsp#register_server({
+"         \ 'name': 'clangd-9',
+"         \ 'cmd': {server_info->['clangd-9']},
+"         \ 'whitelist': ['cpp'],
+"         \ })
+" endif
 
 if executable('pyls')
     au User lsp_setup call lsp#register_server({
@@ -172,9 +181,11 @@ let g:ale_lint_on_insert_leave=0
 let g:ale_lint_on_save=0
 let g:ale_lint_delay=1000
 let g:ale_virtualtext_cursor=1
-let g:ale_virtualtext_prefix="      >>> "
+let g:ale_virtualtext_prefix="    >>> "
 highlight ALEVirtualTextError guifg=DarkRed
 highlight ALEVirtualTextWarning guifg=DarkYellow
+
+let g:ale_linters = {'cpp' : ['gcc']}
 
 " }}} 
 
@@ -195,6 +206,6 @@ endfunction
 autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
-let g:goyo_width=100
+let g:goyo_width=130
 
 "}}}
