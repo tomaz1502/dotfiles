@@ -27,6 +27,7 @@ Plug 'dense-analysis/ale'
 
 Plug 'junegunn/goyo.vim'
 Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
 
 call plug#end()
 "}}}
@@ -91,8 +92,8 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
 nnoremap <Leader>c :set cursorline!<CR>
-nnoremap <Leader>ev :vsp ~/Tom/dotfiles/.vimrc<CR>
-nnoremap <Leader>es :source ~/Tom/dotfiles/.vimrc<CR>
+nnoremap <Leader>ev :vsp ~/Desktop/Tom/Stuff/dotfiles/.vimrc<CR>
+nnoremap <Leader>es :source ~/Desktop/Tom/Stuff/dotfiles/.vimrc<CR>
 
 nnoremap gd :LspDefinition<CR>
 nnoremap K :LspHover<CR>
