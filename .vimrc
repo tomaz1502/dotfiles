@@ -60,10 +60,12 @@ set termguicolors
 if exists('$SUDO_USER')
     set nobackup
     set nowritebackup
+    set noswapfile
 else
     set backupdir=~/local/.vim/tmp/backup
     set backupdir+=~/.vim/tmp/backup
     set backupdir+=.
+    set directory^=~/.vim/swap//
 endif
 
 highlight Search guibg='NONE' guifg='NONE'
