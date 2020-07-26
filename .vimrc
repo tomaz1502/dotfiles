@@ -4,18 +4,9 @@
 "Plugins {{{
 call plug#begin()
 
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'mattn/vim-lsp-settings'
-Plug 'ncm2/ncm2'
-Plug 'roxma/nvim-yarp'
-Plug 'ncm2/ncm2-vim-lsp'
-Plug 'scrooloose/nerdtree'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 
-Plug 'wincent/ferret'
-Plug 'wincent/command-t', {
- \    'do' : 'cd ruby/command-t/ext/command-t && ruby extconf.rb && make'
- \ }
 Plug 'chriskempson/base16-vim'
 
 Plug 'xolox/vim-notes'
@@ -23,22 +14,26 @@ Plug 'xolox/vim-misc'
 
 Plug 'itchyny/lightline.vim'
 Plug 'itchyny/vim-gitbranch'
-Plug 'dense-analysis/ale'
 
+Plug 'neovimhaskell/haskell-vim'
 Plug 'junegunn/goyo.vim'
 Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-fugitive'
 
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'jremmen/vim-ripgrep'
 call plug#end()
 "}}}
 
 "Fundamentals {{{      
-"colorscheme abstract
-"colorscheme base16-dracula
 "colorscheme base16-gruvbox-dark-hard
 "colorscheme base16-atelier-forest
 colorscheme base16-default-dark
 filetype plugin on
+filetype plugin indent on
 
 set number
 set relativenumber
@@ -58,29 +53,25 @@ set termguicolors
 ""set wildignore+=**/node_modules/**
 ""set path+=**
 
-if exists('$SUDO_USER')
-    set nobackup
-    set nowritebackup
-    set noswapfile
-else
-    set backupdir=~/local/.vim/tmp/backup
-    set backupdir+=~/.vim/tmp/backup
-    set backupdir+=.
-    set directory^=~/.vim/swap//
-endif
+set nobackup
+set nowritebackup
+set noswapfile
 
+autocmd CmdwinEnter * map <buffer> <F5> <CR>q:
 highlight Search guibg='NONE' guifg='NONE'
+
+if exists('##TextYankPost')
+    autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank('Substitute', 200)
+endif
 "}}}
 
 " All Maps {{{
 map <F7> :<C-U>!./%:r
-inoremap {<CR> {<CR><ESC>o}<UP><ESC>$a
+inoremap {<CR> {<CR><ESC>o}<UP><ESC>a
 inoremap ( ()<left>
 inoremap [ []<left>
 inoremap " ""<left>
 inoremap ' ''<left>
-nnoremap <C-S-Down> ddp
-nnoremap <C-S-Up> <Up>ddp<Up>
 xnoremap ( xi()<Esc>P
 nnoremap <Up> <Nop>
 nnoremap <Left> <Nop>
@@ -91,78 +82,18 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-nnoremap <Leader>c :set cursorline!<CR>
-nnoremap <Leader>ev :vsp ~/Desktop/Tom/Stuff/dotfiles/.vimrc<CR>
+nnoremap <silent> <Leader>ev :vsp ~/Desktop/Tom/Stuff/dotfiles/.vimrc<CR>
 nnoremap <Leader>es :source ~/Desktop/Tom/Stuff/dotfiles/.vimrc<CR>
 
-nnoremap gd :LspDefinition<CR>
-nnoremap K :LspHover<CR>
-nnoremap gr :LspReferences<CR>
-
-map <C-t> :NERDTreeToggle<CR>
-map <Leader>T :CommandTHelp<CR>
+map <silent> <Leader>t :Files<CR>
+map <silent> <Leader>b :Buffers<CR>
 
 nnoremap <Tab> za
-"}}}
 
-"LSP Stuff {{{
-
-" if executable('clangd-9')
-"     au User lsp_setup call lsp#register_server({
-"         \ 'name': 'clangd-9',
-"         \ 'cmd': {server_info->['clangd-9']},
-"         \ 'whitelist': ['cpp'],
-"         \ })
-" endif
-
-if executable('pyls')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'pyls',
-        \ 'cmd': {server_info->['pyls']},
-        \ 'whitelist': ['python'],
-        \ })
-endif
-
-if executable('rls')
-    au User lsp_setup call lsp#register_server({
-        \ 'name' : 'rls',
-        \ 'cmd' : {server_info->['rls']},
-        \ 'whitelist' : ['rust'],
-        \})
-endif
-
-augroup lsp_install
-    au!
-    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
-    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
-augroup END
-
-let g:lsp_diagnostics_enabled=0
-"}}}
-
-"Auto Complete (NCM2) {{{
-function! s:on_lsp_buffer_enabled() abort
-    setlocal omnifunc=lsp#complete
-endfunction
-inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
-let g:ncm2#auto_popup = 1
-let g:ncm2#popup_limit = 5
-"let g:ncm2#popup_delay = 1300 
-let g:ncm2#complete_length = 3
-
-" Use <TAB> to select the popup menu:
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-autocmd BufEnter * call ncm2#enable_for_buffer()
-set completeopt=noinsert,menuone,noselect
-set shortmess+=c
-au TextChangedI * call ncm2#auto_trigger()
-
+inoremap jk <Esc>
 "}}}
 
 "Light Line Options {{{
-
 let g:lightline = {
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
@@ -176,24 +107,7 @@ let g:lightline = {
 set noshowmode "because of lightline
 "}}}
 
-" ALE Options {{{
-
-let g:ale_open_list=0
-let g:ale_lint_on_text_changed=1
-let g:ale_lint_on_insert_leave=0
-let g:ale_lint_on_save=0
-let g:ale_lint_delay=1000
-let g:ale_virtualtext_cursor=1
-let g:ale_virtualtext_prefix="    >>> "
-highlight ALEVirtualTextError guifg=DarkRed
-highlight ALEVirtualTextWarning guifg=DarkYellow
-
-let g:ale_linters = {'cpp' : ['gcc']}
-
-" }}} 
-
 " Goyo (Hide tmux status bar) {{{
-
 function! s:goyo_enter()
     if exists('$TMUX')
         silent !tmux set status off
@@ -210,5 +124,51 @@ autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
 let g:goyo_width=130
+"}}}
 
+" Haskell Indent {{{
+let g:haskell_indent_if = 4
+let g:haskell_indent_case = 4
+let g:haskell_indent_let = 4
+let g:haskell_indent_where = 4
+let g:haskell_indent_before_where = 4
+let g:haskell_indent_after_bare_where = 4
+let g:haskell_indent_do = 4
+let g:haskell_indent_in = 4
+let g:haskell_indent_guard = 4
+let g:haskell_indent_case_alternative = 4
+" }}}
+
+" COC {{{
+
+"Tab auto complete
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
+endfunction
+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+
+"Maps
+
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gr <Plug>(coc-references)
+nmap <silent> K :call <SID>show_documentation()<CR>
+nmap <leader>rn <Plug>(coc-rename)
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+nmap <silent> <Leader>cc :CocConfig<CR>
+nmap <silent> <Leader>sc :CocList diagnostics<CR>
+xmap <silent> <leader>f  <Plug>(coc-format-selected)
+command! -nargs=0 Format :call CocAction('format')
 "}}}
