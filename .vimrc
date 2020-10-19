@@ -9,9 +9,10 @@ Plug 'junegunn/fzf.vim'
 
 Plug 'chriskempson/base16-vim'
 
-Plug 'xolox/vim-notes'
-Plug 'xolox/vim-misc'
+" Plug 'xolox/vim-notes'
+" Plug 'xolox/vim-misc'
 
+" Only for now...
 Plug 'itchyny/lightline.vim'
 Plug 'itchyny/vim-gitbranch'
 
@@ -19,22 +20,27 @@ Plug 'neovimhaskell/haskell-vim'
 Plug 'junegunn/goyo.vim'
 Plug 'tpope/vim-commentary'
 
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'jremmen/vim-ripgrep'
+
+" Maybe?
+" Plug 'bfrg/vim-cpp-modern'
+" Plug 'honza/vim-snippets'
+
+Plug 'walkie/twelf-vim'
+Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
+Plug 'altercation/vim-colors-solarized'
 call plug#end()
 "}}}
 
 "Fundamentals {{{      
-"colorscheme base16-gruvbox-dark-hard
-"colorscheme base16-atelier-forest
+
+" syntax enable
+" set background=light
+" colorscheme solarized
 colorscheme base16-default-dark
 filetype plugin on
 filetype plugin indent on
-
 set number
 set relativenumber
 set mouse=a
@@ -45,6 +51,7 @@ set shiftwidth=4
 let mapleader=","
 syntax on
 
+set cursorline
 set hidden
 set wildmenu
 set signcolumn=no
@@ -56,9 +63,6 @@ set termguicolors
 set nobackup
 set nowritebackup
 set noswapfile
-
-autocmd CmdwinEnter * map <buffer> <F5> <CR>q:
-highlight Search guibg='NONE' guifg='NONE'
 
 if exists('##TextYankPost')
     autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank('Substitute', 200)
@@ -88,12 +92,24 @@ nnoremap <Leader>es :source ~/Desktop/Tom/Stuff/dotfiles/.vimrc<CR>
 map <silent> <Leader>t :Files<CR>
 map <silent> <Leader>b :Buffers<CR>
 
+" re-run commands from q:
+autocmd CmdwinEnter * map <buffer> <F5> <CR>q:
 nnoremap <Tab> za
 
 inoremap jk <Esc>
+nnoremap <silent> <Leader>w :w<CR>
+
+" Press Space to turn off highlighting and clear any message already displayed.
+nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
+
+" very magic mode
+nnoremap / /\v
+" vnoremap / /\v
 "}}}
 
-"Light Line Options {{{
+" Plugins {{{
+
+"Light Line {{{
 let g:lightline = {
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
@@ -102,12 +118,14 @@ let g:lightline = {
       \ 'component_function': {
       \   'gitbranch': 'gitbranch#name'
       \ },
+      \ 'colorscheme': 'powerlineish'
       \ }
 
-set noshowmode "because of lightline
+set noshowmode
 "}}}
 
-" Goyo (Hide tmux status bar) {{{
+" Goyo {{{
+" Hide tmux status bar
 function! s:goyo_enter()
     if exists('$TMUX')
         silent !tmux set status off
@@ -140,12 +158,22 @@ let g:haskell_indent_case_alternative = 4
 " }}}
 
 " COC {{{
-
 "Tab auto complete
+
+
+inoremap <silent><expr> <TAB>
+  \ pumvisible() ? coc#_select_confirm() :
+  \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+  \ <SID>check_back_space() ? "\<TAB>" :
+  \ coc#refresh()
+
 function! s:check_back_space() abort
   let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~ '\s'
+  return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
+
+let g:coc_snippet_next = '<tab>'
+
 
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
@@ -153,7 +181,6 @@ inoremap <silent><expr> <TAB>
       \ coc#refresh()
 
 "Maps
-
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gr <Plug>(coc-references)
 nmap <silent> K :call <SID>show_documentation()<CR>
@@ -171,4 +198,15 @@ nmap <silent> <Leader>cc :CocConfig<CR>
 nmap <silent> <Leader>sc :CocList diagnostics<CR>
 xmap <silent> <leader>f  <Plug>(coc-format-selected)
 command! -nargs=0 Format :call CocAction('format')
+
+highlight CocErrorVirtualText guifg=#ff422b gui=Italic
+highlight CocErrorSign guifg=#ff422b
+highlight CocWarningVirtualText guifg=#fab005 gui=Italic
+highlight CocInfoSign guifg=#fab005
 "}}}
+
+" {{{ Tex 
+autocmd Filetype tex setl updatetime=999999
+" }}}
+
+" }}}
