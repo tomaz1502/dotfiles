@@ -1,7 +1,7 @@
 " VIMRC FILE
 " GitHub : https://github.com/tomaz1502/dotfiles/blob/master/.vimrc
 
-"Plugins {{{
+"Plugged {{{
 call plug#begin()
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -12,8 +12,6 @@ Plug 'chriskempson/base16-vim'
 " Plug 'xolox/vim-notes'
 " Plug 'xolox/vim-misc'
 
-" Only for now...
-Plug 'itchyny/lightline.vim'
 Plug 'itchyny/vim-gitbranch'
 
 Plug 'neovimhaskell/haskell-vim'
@@ -51,7 +49,6 @@ set shiftwidth=4
 let mapleader=","
 syntax on
 
-set cursorline
 set hidden
 set wildmenu
 set signcolumn=no
@@ -64,6 +61,7 @@ set nobackup
 set nowritebackup
 set noswapfile
 
+highlight Comment gui=Italic
 if exists('##TextYankPost')
     autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank('Substitute', 200)
 endif
@@ -85,6 +83,7 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+nnoremap Y y$
 
 nnoremap <silent> <Leader>ev :vsp ~/Desktop/Tom/Stuff/dotfiles/.vimrc<CR>
 nnoremap <Leader>es :source ~/Desktop/Tom/Stuff/dotfiles/.vimrc<CR>
@@ -107,7 +106,7 @@ nnoremap / /\v
 " vnoremap / /\v
 "}}}
 
-" Plugins {{{
+" Plugins Config {{{
 
 "Light Line {{{
 let g:lightline = {
@@ -210,3 +209,21 @@ autocmd Filetype tex setl updatetime=999999
 " }}}
 
 " }}}
+
+
+
+"Status Line
+
+highlight SL1 gui=Bold guifg=#b8b8b8 guibg=#282828
+highlight SL2 gui=Italic guifg=#b8b8b8 guibg=#282828
+highlight SL3 guifg=#b8b8b8 guibg=#282828
+
+set statusline=%#NvimInternalError#
+set statusline+=\ \ \ \ %#SL1#
+set statusline+=\ \ %f
+set statusline+=%#SL2#
+set statusline+=\ \ [%{gitbranch#name()}]
+set statusline+=\ %m
+set statusline+=%#SL3#
+set statusline+=%=ℓ\ %l/%L\ \ 𝐜\ %c/%{virtcol('$')}\ 
+
