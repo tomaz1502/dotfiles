@@ -28,6 +28,8 @@ Plug 'jremmen/vim-ripgrep'
 Plug 'walkie/twelf-vim'
 Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
 Plug 'altercation/vim-colors-solarized'
+" Plug 'tpope/vim-vinegar'
+Plug 'justinmk/vim-dirvish'
 call plug#end()
 "}}}
 
@@ -210,17 +212,15 @@ autocmd Filetype tex setl updatetime=999999
 
 " }}}
 
-
-
-"Status Line
+" Status Line {{{ 
 
 highlight SL1 gui=Bold guifg=#b8b8b8 guibg=#282828
 highlight SL2 gui=Italic guifg=#b8b8b8 guibg=#282828
 highlight SL3 guifg=#b8b8b8 guibg=#282828
 
 highlight IM gui=Bold guifg=Gold guibg=16
-highlight MODIFIED guibg=#00FF00
-highlight SAVED guibg=#FF0000
+highlight SAVED guibg=#00FF00
+highlight MODIFIED guibg=#FF0000
 
 function! s:status_info()
     set statusline+=\ \ \ \ %#SL1#
@@ -228,7 +228,7 @@ function! s:status_info()
     set statusline+=%#SL2#
     set statusline+=\ \ [%{gitbranch#name()}]
     set statusline+=%#SL3#
-    set statusline+=%=%y\ \ ℓ\ %l/%L\ \ 𝐜\ %c/%{virtcol('$')}\ 
+    set statusline+=%=%y\ \ ℓ\ %l/%L\ \ 𝐜\ %c/%{strlen(join([getline('.'),'']))}\ 
 endfunction
 
 function! s:status_saved()
@@ -248,3 +248,4 @@ autocmd BufWrite * call s:status_saved()
 
 call s:status_saved()
 
+" }}} 
