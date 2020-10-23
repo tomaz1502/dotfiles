@@ -85,8 +85,8 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 nnoremap Y y$
 
-nnoremap <silent> <Leader>ev :vsp ~/Desktop/Tom/Stuff/dotfiles/.vimrc<CR>
-nnoremap <Leader>es :source ~/Desktop/Tom/Stuff/dotfiles/.vimrc<CR>
+nnoremap <silent> <Leader>ev :vsp ~/Tom/dotfiles/.vimrc<CR>
+nnoremap <Leader>es :source ~/Tom/dotfiles/.vimrc<CR>
 
 map <silent> <Leader>t :Files<CR>
 map <silent> <Leader>b :Buffers<CR>
@@ -218,12 +218,33 @@ highlight SL1 gui=Bold guifg=#b8b8b8 guibg=#282828
 highlight SL2 gui=Italic guifg=#b8b8b8 guibg=#282828
 highlight SL3 guifg=#b8b8b8 guibg=#282828
 
-set statusline=%#NvimInternalError#
-set statusline+=\ \ \ \ %#SL1#
-set statusline+=\ \ %f
-set statusline+=%#SL2#
-set statusline+=\ \ [%{gitbranch#name()}]
-set statusline+=\ %m
-set statusline+=%#SL3#
-set statusline+=%=ℓ\ %l/%L\ \ 𝐜\ %c/%{virtcol('$')}\ 
+highlight IM gui=Bold guifg=Gold guibg=16
+highlight MODIFIED guibg=#00FF00
+highlight SAVED guibg=#FF0000
+
+function! s:status_info()
+    set statusline+=\ \ \ \ %#SL1#
+    set statusline+=\ \ %f
+    set statusline+=%#SL2#
+    set statusline+=\ \ [%{gitbranch#name()}]
+    set statusline+=%#SL3#
+    set statusline+=%=%y\ \ ℓ\ %l/%L\ \ 𝐜\ %c/%{virtcol('$')}\ 
+endfunction
+
+function! s:status_saved()
+    set statusline=%#SAVED#
+    call s:status_info()
+endfunction
+
+function! s:status_modified()
+    set statusline=%#MODIFIED#
+    call s:status_info()
+endfunction
+
+autocmd InsertEnter * echohl IM | echo "  -- Insert Mode --" | echohl None
+autocmd InsertLeave * echo ""
+autocmd TextChanged,TextChangedI,TextChangedP,InsertChange * call s:status_modified()
+autocmd BufWrite * call s:status_saved()
+
+call s:status_saved()
 
