@@ -2,7 +2,7 @@
 " GitHub : https://github.com/tomaz1502/dotfiles/blob/master/.vimrc
 
 "Plugged {{{
-call plug#begin()
+call plug#begin('~/.vim/autoload/plugged')
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -28,7 +28,6 @@ Plug 'jremmen/vim-ripgrep'
 Plug 'walkie/twelf-vim'
 Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
 Plug 'altercation/vim-colors-solarized'
-" Plug 'tpope/vim-vinegar'
 Plug 'justinmk/vim-dirvish'
 call plug#end()
 "}}}
@@ -87,8 +86,8 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 nnoremap Y y$
 
-nnoremap <silent> <Leader>ev :vsp ~/Tom/dotfiles/.vimrc<CR>
-nnoremap <Leader>es :source ~/Tom/dotfiles/.vimrc<CR>
+nnoremap <silent> <Leader>ev :vsp ~/Desktop/Tom/dotfiles/.vimrc<CR>
+nnoremap <Leader>es :source ~/Desktop/Tom/dotfiles/.vimrc<CR>
 
 map <silent> <Leader>t :Files<CR>
 map <silent> <Leader>b :Buffers<CR>
@@ -127,16 +126,23 @@ set noshowmode
 
 " Goyo {{{
 " Hide tmux status bar
+
+let g:in_goyo=0
+
 function! s:goyo_enter()
     if exists('$TMUX')
         silent !tmux set status off
     endif
+    let g:in_goyo=1
+    set laststatus=0
 endfunction
 
 function! s:goyo_leave()
     if exists('$TMUX')
         silent !tmux set status on
     endif
+    let g:in_goyo=0
+    set laststatus=2
 endfunction
 
 autocmd! User GoyoEnter nested call <SID>goyo_enter()
@@ -218,9 +224,9 @@ highlight SL1 gui=Bold guifg=#b8b8b8 guibg=#282828
 highlight SL2 gui=Italic guifg=#b8b8b8 guibg=#282828
 highlight SL3 guifg=#b8b8b8 guibg=#282828
 
-highlight IM gui=Bold guifg=Gold guibg=16
-highlight SAVED guibg=#00FF00
-highlight MODIFIED guibg=#FF0000
+highlight IM gui=Bold guifg=White guibg=16
+highlight SAVED guibg=#FF0000
+highlight MODIFIED guibg=Gold
 
 function! s:status_info()
     set statusline+=\ \ \ \ %#SL1#
@@ -232,13 +238,17 @@ function! s:status_info()
 endfunction
 
 function! s:status_saved()
-    set statusline=%#SAVED#
-    call s:status_info()
+    if !g:in_goyo
+        set statusline=%#SAVED#
+        call s:status_info()
+    endif
 endfunction
 
 function! s:status_modified()
-    set statusline=%#MODIFIED#
-    call s:status_info()
+    if !g:in_goyo && &modified
+        set statusline=%#MODIFIED#
+        call s:status_info()
+    endif
 endfunction
 
 autocmd InsertEnter * echohl IM | echo "  -- Insert Mode --" | echohl None
@@ -249,3 +259,4 @@ autocmd BufWrite * call s:status_saved()
 call s:status_saved()
 
 " }}} 
+
