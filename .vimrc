@@ -86,8 +86,8 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 nnoremap Y y$
 
-nnoremap <silent> <Leader>ev :vsp ~/Desktop/Tom/dotfiles/.vimrc<CR>
-nnoremap <Leader>es :source ~/Desktop/Tom/dotfiles/.vimrc<CR>
+nnoremap <silent> <Leader>ev :vsp ~/Tom/dotfiles/.vimrc<CR>
+nnoremap <Leader>es :source ~/Tom/dotfiles/.vimrc<CR>
 
 map <silent> <Leader>t :Files<CR>
 map <silent> <Leader>b :Buffers<CR>
