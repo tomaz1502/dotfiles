@@ -260,3 +260,4 @@ call s:status_saved()
 
 " }}} 
 
+autocmd BufNewFile,BufRead *.fish set ft=sh
