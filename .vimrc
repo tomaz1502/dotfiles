@@ -4,6 +4,8 @@
 "Plugged {{{
 call plug#begin('~/.vim/autoload/plugged')
 
+Plug 'machakann/vim-highlightedyank'
+
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
@@ -35,8 +37,6 @@ call plug#end()
 "Fundamentals {{{      
 
 " syntax enable
-" set background=light
-" colorscheme solarized
 colorscheme base16-default-dark
 filetype plugin on
 filetype plugin indent on
@@ -47,6 +47,7 @@ set cindent
 set tabstop=4
 set expandtab
 set shiftwidth=4
+set noshowmode
 let mapleader=","
 syntax on
 
@@ -63,9 +64,15 @@ set nowritebackup
 set noswapfile
 
 highlight Comment gui=Italic
-if exists('##TextYankPost')
-    autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank('Substitute', 200)
+" if exists('##TextYankPost')
+"     " autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank('Substitute', 200)
+" endif
+
+if !exists('##TextYankPost')
+  map y <Plug>(highlightedyank)
 endif
+
+
 "}}}
 
 " All Maps {{{
@@ -86,8 +93,8 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 nnoremap Y y$
 
-nnoremap <silent> <Leader>ev :vsp ~/Tom/dotfiles/.vimrc<CR>
-nnoremap <Leader>es :source ~/Tom/dotfiles/.vimrc<CR>
+nnoremap <silent> <Leader>ev :vsp ~/Desktop/Tom/dotfiles/.vimrc<CR>
+nnoremap <Leader>es :source ~/Desktop/Tom/dotfiles/.vimrc<CR>
 
 map <silent> <Leader>t :Files<CR>
 map <silent> <Leader>b :Buffers<CR>
@@ -98,6 +105,8 @@ nnoremap <Tab> za
 
 inoremap jk <Esc>
 nnoremap <silent> <Leader>w :w<CR>
+nnoremap <silent> <Leader>q :q<CR>
+nnoremap <silent> <Leader>x :wq<CR>
 
 " Press Space to turn off highlighting and clear any message already displayed.
 nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
@@ -108,21 +117,6 @@ nnoremap / /\v
 "}}}
 
 " Plugins Config {{{
-
-"Light Line {{{
-let g:lightline = {
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
-      \ },
-      \ 'component_function': {
-      \   'gitbranch': 'gitbranch#name'
-      \ },
-      \ 'colorscheme': 'powerlineish'
-      \ }
-
-set noshowmode
-"}}}
 
 " Goyo {{{
 " Hide tmux status bar
@@ -203,6 +197,7 @@ endfunction
 
 nmap <silent> <Leader>cc :CocConfig<CR>
 nmap <silent> <Leader>sc :CocList diagnostics<CR>
+nmap <silent> <Leader>A :CocAction<CR>
 xmap <silent> <leader>f  <Plug>(coc-format-selected)
 command! -nargs=0 Format :call CocAction('format')
 
@@ -216,48 +211,96 @@ highlight CocInfoSign guifg=#fab005
 autocmd Filetype tex setl updatetime=999999
 " }}}
 
+" Yank Highlight {{{ 
+
+highlight HighlightedyankRegion ctermfg=10 ctermbg=3 guifg=#282828 guibg=#f7ca88
+let g:highlightedyank_highlight_duration = 200
+
+"}}}
+
 " }}}
 
 " Status Line {{{ 
 
 highlight SL1 gui=Bold guifg=#b8b8b8 guibg=#282828
-highlight SL2 gui=Italic guifg=#b8b8b8 guibg=#282828
-highlight SL3 guifg=#b8b8b8 guibg=#282828
+highlight SL2 guifg=#b8b8b8 guibg=#282828
+highlight SL3 guifg=Black guibg=Gray
 
 highlight IM gui=Bold guifg=White guibg=16
-highlight SAVED guibg=#FF0000
+highlight SAVED guibg=Red
 highlight MODIFIED guibg=Gold
 
 function! s:status_info()
-    set statusline+=\ \ \ \ %#SL1#
-    set statusline+=\ \ %f
-    set statusline+=%#SL2#
-    set statusline+=\ \ [%{gitbranch#name()}]
-    set statusline+=%#SL3#
-    set statusline+=%=%y\ \ ℓ\ %l/%L\ \ 𝐜\ %c/%{strlen(join([getline('.'),'']))}\ 
+    setlocal statusline+=\ \ \ \ %#SL1#
+    setlocal statusline+=\ \ %f
+    setlocal statusline+=%#SL2#
+    setlocal statusline+=\ \ [%{gitbranch#name()}]
+    setlocal statusline+=%=%y\ %#SL3#\ ℓ\ %l/%L\ \ 𝐜\ %c/%{strlen(join([getline('.'),'']))}\ 
 endfunction
 
 function! s:status_saved()
     if !g:in_goyo
-        set statusline=%#SAVED#
+        setlocal statusline=%#SAVED#
         call s:status_info()
     endif
 endfunction
 
 function! s:status_modified()
     if !g:in_goyo && &modified
-        set statusline=%#MODIFIED#
+        setlocal statusline=%#MODIFIED#
         call s:status_info()
     endif
 endfunction
 
+function! s:focus_window() abort
+  if exists('w:matches')
+    for l:match in w:matches
+      call matchdelete(l:match)
+    endfor
+    let w:matches=[]
+  endif
+  let &colorcolumn=""
+  if &modified
+      call s:status_modified()
+  else
+      call s:status_saved()
+  endif
+endfunction
+
+function! s:blur_window() abort
+  if !exists('w:matches')
+    " Instead of unconditionally resetting, append to existing array.
+    " This allows us to gracefully handle duplicate autocmds.
+    let w:matches=[]
+  endif
+  let l:start=max([1, line('w0') - 20])
+  let l:end=min([line('$'), line('w$') + 20])
+  while l:start <= l:end
+    let l:next=l:start + 8
+    let l:id=matchaddpos(
+          \   'SL2',
+          \   range(l:start, min([l:end, l:next])),
+          \   1000
+          \ )
+    call add(w:matches, l:id)
+    let l:start=l:next
+  endwhile
+  let &colorcolumn=join(range(1,256), ',')
+  if !g:in_goyo
+      setlocal statusline=%#SL2#
+      setlocal statusline+=\ \ \ \ 
+      setlocal statusline+=\ \ %f
+  endif
+endfunction
+
 autocmd InsertEnter * echohl IM | echo "  -- Insert Mode --" | echohl None
 autocmd InsertLeave * echo ""
+
 autocmd TextChanged,TextChangedI,TextChangedP,InsertChange * call s:status_modified()
 autocmd BufWrite * call s:status_saved()
+autocmd WinNew,TabNew,BufNew,BufRead * call s:status_saved()
 
-call s:status_saved()
-
+autocmd BufEnter,FocusGained,VimEnter,WinEnter * call s:focus_window()
+autocmd FocusLost,WinLeave * call s:blur_window()
 " }}} 
 
-autocmd BufNewFile,BufRead *.fish set ft=sh
