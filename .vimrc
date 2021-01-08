@@ -97,7 +97,6 @@ nnoremap <Leader>es :source ~/Desktop/Tom/dotfiles/.vimrc<CR>
 
 map <silent> <Leader>t :Files<CR>
 map <silent> <Leader>b :Buffers<CR>
-map <silent> <Leader>r :RnvimrToggle<CR>
 
 " re-run commands from q:
 autocmd CmdwinEnter * map <buffer> <F5> <CR>q:
