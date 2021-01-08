@@ -24,13 +24,11 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'jremmen/vim-ripgrep'
 
 " Maybe?
-" Plug 'bfrg/vim-cpp-modern'
 " Plug 'honza/vim-snippets'
 
-Plug 'walkie/twelf-vim'
 Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
-Plug 'altercation/vim-colors-solarized'
 Plug 'justinmk/vim-dirvish'
+
 call plug#end()
 "}}}
 
@@ -48,6 +46,8 @@ set tabstop=4
 set expandtab
 set shiftwidth=4
 set noshowmode
+set colorcolumn=80
+set textwidth=80
 let mapleader=","
 syntax on
 
@@ -65,13 +65,12 @@ set noswapfile
 
 highlight Comment gui=Italic
 " if exists('##TextYankPost')
-"     " autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank('Substitute', 200)
+"     autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank('Substitute', 200)
 " endif
 
 if !exists('##TextYankPost')
   map y <Plug>(highlightedyank)
 endif
-
 
 "}}}
 
@@ -98,6 +97,7 @@ nnoremap <Leader>es :source ~/Desktop/Tom/dotfiles/.vimrc<CR>
 
 map <silent> <Leader>t :Files<CR>
 map <silent> <Leader>b :Buffers<CR>
+map <silent> <Leader>r :RnvimrToggle<CR>
 
 " re-run commands from q:
 autocmd CmdwinEnter * map <buffer> <F5> <CR>q:
@@ -114,13 +114,16 @@ nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
 " very magic mode
 nnoremap / /\v
 " vnoremap / /\v
+
+" nnoremap <CR> *
+" nnoremap <Backspace> #
+
 "}}}
 
 " Plugins Config {{{
 
 " Goyo {{{
 " Hide tmux status bar
-
 let g:in_goyo=0
 
 function! s:goyo_enter()
@@ -161,7 +164,6 @@ let g:haskell_indent_case_alternative = 4
 " COC {{{
 "Tab auto complete
 
-
 inoremap <silent><expr> <TAB>
   \ pumvisible() ? coc#_select_confirm() :
   \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
@@ -174,7 +176,6 @@ function! s:check_back_space() abort
 endfunction
 
 let g:coc_snippet_next = '<tab>'
-
 
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
@@ -207,10 +208,6 @@ highlight CocWarningVirtualText guifg=#fab005 gui=Italic
 highlight CocInfoSign guifg=#fab005
 "}}}
 
-" {{{ Tex 
-autocmd Filetype tex setl updatetime=999999
-" }}}
-
 " Yank Highlight {{{ 
 
 highlight HighlightedyankRegion ctermfg=10 ctermbg=3 guifg=#282828 guibg=#f7ca88
@@ -232,7 +229,7 @@ highlight MODIFIED guibg=Gold
 
 function! s:status_info()
     setlocal statusline+=\ \ \ \ %#SL1#
-    setlocal statusline+=\ \ %f
+    setlocal statusline+=\ \ %{expand('%:p:h:t')}/%t
     setlocal statusline+=%#SL2#
     setlocal statusline+=\ \ [%{gitbranch#name()}]
     setlocal statusline+=%=%y\ %#SL3#\ ℓ\ %l/%L\ \ 𝐜\ %c/%{strlen(join([getline('.'),'']))}\ 
@@ -253,13 +250,13 @@ function! s:status_modified()
 endfunction
 
 function! s:focus_window() abort
-  if exists('w:matches')
-    for l:match in w:matches
-      call matchdelete(l:match)
-    endfor
-    let w:matches=[]
-  endif
-  let &colorcolumn=""
+  " if exists('w:matches')
+  "   for l:match in w:matches
+  "     call matchdelete(l:match)
+  "   endfor
+  "   let w:matches=[]
+  " endif
+  let &colorcolumn="80"
   if &modified
       call s:status_modified()
   else
@@ -268,23 +265,23 @@ function! s:focus_window() abort
 endfunction
 
 function! s:blur_window() abort
-  if !exists('w:matches')
-    " Instead of unconditionally resetting, append to existing array.
-    " This allows us to gracefully handle duplicate autocmds.
-    let w:matches=[]
-  endif
-  let l:start=max([1, line('w0') - 20])
-  let l:end=min([line('$'), line('w$') + 20])
-  while l:start <= l:end
-    let l:next=l:start + 8
-    let l:id=matchaddpos(
-          \   'SL2',
-          \   range(l:start, min([l:end, l:next])),
-          \   1000
-          \ )
-    call add(w:matches, l:id)
-    let l:start=l:next
-  endwhile
+  " if !exists('w:matches')
+  "   " Instead of unconditionally resetting, append to existing array.
+  "   " This allows us to gracefully handle duplicate autocmds.
+  "   let w:matches=[]
+  " endif
+  " let l:start=max([1, line('w0') - 20])
+  " let l:end=min([line('$'), line('w$') + 20])
+  " while l:start <= l:end
+  "   let l:next=l:start + 8
+  "   let l:id=matchaddpos(
+  "         \   'SL2',
+  "         \   range(l:start, min([l:end, l:next])),
+  "         \   1000
+  "         \ )
+  "   call add(w:matches, l:id)
+  "   let l:start=l:next
+  " endwhile
   let &colorcolumn=join(range(1,256), ',')
   if !g:in_goyo
       setlocal statusline=%#SL2#
@@ -292,6 +289,9 @@ function! s:blur_window() abort
       setlocal statusline+=\ \ %f
   endif
 endfunction
+" }}} 
+
+" Autocmds {{{ 
 
 autocmd InsertEnter * echohl IM | echo "  -- Insert Mode --" | echohl None
 autocmd InsertLeave * echo ""
@@ -302,5 +302,8 @@ autocmd WinNew,TabNew,BufNew,BufRead * call s:status_saved()
 
 autocmd BufEnter,FocusGained,VimEnter,WinEnter * call s:focus_window()
 autocmd FocusLost,WinLeave * call s:blur_window()
-" }}} 
 
+autocmd Filetype tex setl updatetime=999999
+autocmd VimEnter {} :Files
+
+" }}}
