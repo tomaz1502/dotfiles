@@ -1,0 +1,73 @@
+#!/bin/sh
+
+# Helper to deploy a named module without having to navigate to it.
+
+ROOT=~/code/portal/liferay-portal
+
+function deploy() {
+  DIR=$1
+
+  # Construct command line based on variables:
+  #
+  #   portool deploy                    -> gradlew deploy -a
+  #   ALL=1 portool deploy              -> gradlew deploy
+  #   CLEAN=1 portool deploy            -> gradlew clean deploy -a
+  #   ALL=1 CLEAN=1 portool deploy      -> gradlew clean deploy
+  #
+  if [ -n "$ALL" ]; then
+    COMMAND="gradlew ${CLEAN:+clean }deploy"
+  else
+    COMMAND="gradlew ${CLEAN:+clean }deploy -a"
+  fi
+
+  echo "$COMMAND"
+  eval "(cd \"\$DIR\" && $COMMAND)"
+}
+
+if [ $# -eq 0 ]; then
+  # No arguments: try to find nearest ancestor directory with a "build.gradle"
+  # file.
+  DIR=$PWD
+
+  while true; do
+    if [ -f "$DIR/build.gradle" ]; then
+      MODULE=$(basename "$DIR")
+      LOCATION=$(realpath $DIR --relative-to="$ROOT")
+      echo "✅ Found $MODULE at $LOCATION"
+      deploy "$DIR"
+      break
+    fi
+
+    if [ "$DIR" = "/" ]; then
+      echo "error: no build.gradle found in $PWD or any of its ancestors"
+      exit 1
+    fi
+    DIR=$(dirname "$DIR")
+  done
+else
+  # Try to find and build named modules.
+  cd "$ROOT"
+
+  while (( "$#" )); do
+    echo "⏱  Remaining modules to deploy: $#"
+
+    MODULE="$1"
+    GRADLE="$MODULE/build.gradle"
+
+    if [ ! -f "$GRADLE" ]; then
+      GRADLE=$(find modules/apps modules/dxp/apps -type f -path "*/${MODULE}/build.gradle" -maxdepth 3 -mindepth 3 | head -1)
+    fi
+
+    if [ -z "$GRADLE" ]; then
+      echo "error: couldn't find module \`$MODULE\`"
+      exit 1
+    fi
+
+    DIR=$(dirname "$GRADLE")
+
+    echo "✅ Found $MODULE module at $DIR"
+    deploy "$DIR"
+
+    shift
+  done
+fi
