@@ -41,7 +41,7 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Return exec gnome-terminal
 
 # kill focused window
 bindsym $mod+q kill
@@ -49,6 +49,7 @@ bindsym $mod+q kill
 # start dmenu (a program launcher)
 # bindsym $mod+d exec --no-startup-id dmenu_run
 bindsym $mod+p exec rofi -show run -font "FiraMono 12"
+bindsym $mod+w exec rofi -show window -font "FiraMono 12"
 # A more modern dmenu replacement is rofi:
 # bindcode $mod+40 exec rofi -modi drun,run -show drun
 # There also is i3-dmenu-desktop which only displays applications shipping a
@@ -154,7 +155,7 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
 # resize window (you can also use the mouse for that)
-mode "resize" {
+mode "Resize" {
         # Pressing h will shrink the window’s width.
         # Pressing l will grow the window’s width.
         # Pressing k will shrink the window’s height.
@@ -170,7 +171,7 @@ mode "resize" {
         bindsym $mod+r mode "default"
 }
 
-bindsym $mod+r mode "resize"
+bindsym $mod+r mode "Resize"
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
@@ -179,7 +180,7 @@ bindsym $mod+r mode "resize"
 # }
 
 # Display Wallpaper
-exec_always feh --bg-fill ~/Pictures/Wallpaper/Manjaro/dreams.jpg
+exec_always feh --bg-fill ~/Pictures/Wallpaper/fedora.png
 
 # i3 lock screen
 bindsym $mod+Shift+x exec i3lock-fancy
@@ -187,20 +188,22 @@ bindsym $mod+Shift+x exec i3lock-fancy
 bindsym $mod+period exec ~/Tools/Script/switch_keys.sh
 
 # launch common apps
-mode "app_launch" {
-        bindsym g exec gnome-terminal ; mode "default"
+mode "App Launch" {
+        bindsym a exec alacritty ; mode "default"
         bindsym b exec chromium ; mode "default"
         bindsym f exec nautilus ; mode "default"
         bindsym t exec telegram-desktop ; mode "default"
         bindsym s exec slack ; mode "default"
         bindsym e exec geary ; mode "default"
+        bindsym d exec discord ; mode "default"
+        bindsym v exec virtualbox ; mode "default"
 
         bindsym Return mode "default"
         bindsym Escape mode "default"
         bindsym $mod+a mode "default"
 }
 
-bindsym $mod+a mode "app_launch"
+bindsym $mod+a mode "App Launch"
 # Assign programs to workspaces
 # for_window [class="Alacritty"] move to workspace $ws1
 # for_window [class="Gnome-terminal"] move to workspace $ws1
@@ -221,7 +224,7 @@ for_window [class="^.*"] border pixel 2
 # Set gaps
 gaps inner 20
 
-mode "gaps_mode" {
+mode "Gaps Mode" {
         bindsym l gaps inner all set 0
         bindsym m gaps inner all set 20
         bindsym h gaps inner all set 45
@@ -231,10 +234,18 @@ mode "gaps_mode" {
         bindsym $mod+g mode "default"
 }
 
-bindsym $mod+g mode "gaps_mode"
+bindsym $mod+g mode "Gaps Mode"
 
 # Polybar launch
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
 # hide borders if there is only one window on the workspace
 hide_edge_borders smart
+
+# Send window to other monitor (not working ?)
+# bindsym $mod+Shift+p move container to output right # ; focus output right
+# bindsym $mod+Shift+o move container to output left  # ; focus output left
+
+# Print screen
+bindsym Print exec ~/Tools/Script/print.sh
+# bindsym Shift+Print exec "~/Tools/Script/print.sh area" not working?
