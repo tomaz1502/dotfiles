@@ -1,5 +1,0 @@
-# Host-specific config.
-
-source $HOME/.zsh/liferay/exports
-
-alias irl=.irl.rb 2019 1 14
