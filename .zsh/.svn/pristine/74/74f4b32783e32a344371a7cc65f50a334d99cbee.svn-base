@@ -1,0 +1,13 @@
+#
+# See: https://github.com/liferay/liferay-frontend-guidelines/blob/master/dxp/environment.md
+#
+
+# Comment this out to make use of https://github.com/liferay/liferay-binaries-cache-2020
+#build.binaries.cache.dir=
+
+jsp.precompile=off
+
+nodejs.node.env=development
+
+# We don't want multiple daemons running, each using ~7GB of memory.
+org.gradle.daemon=false
