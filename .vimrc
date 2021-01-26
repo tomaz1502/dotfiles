@@ -230,7 +230,7 @@ function! s:status_info()
     setlocal statusline+=\ \ \ \ %#SL1#
     setlocal statusline+=\ \ %{expand('%:p:h:t')}/%t
     setlocal statusline+=%#SL2#
-    setlocal statusline+=\ \ [%{gitbranch#name()}]
+    " setlocal statusline+=\ \ [%{gitbranch#name()}]
     setlocal statusline+=%=%y\ %#SL3#\ ℓ\ %l/%L\ \ 𝐜\ %c/%{strlen(join([getline('.'),'']))}\ 
 endfunction
 
@@ -306,3 +306,6 @@ autocmd Filetype tex setl updatetime=999999
 autocmd VimEnter {} :Files
 
 " }}}
+
+" let g:coc_start_at_startup = v:false
+au VimLeave * set guicursor=a:ver1-blinkoff0
