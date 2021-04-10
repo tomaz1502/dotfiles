@@ -77,10 +77,11 @@ endif
 " All Maps {{{
 map <F7> :<C-U>!./%:r
 inoremap {<CR> {<CR><ESC>o}<UP><ESC>a
+" inoremap { {}<left>
 inoremap ( ()<left>
 inoremap [ []<left>
 inoremap " ""<left>
-inoremap ' ''<left>
+" inoremap ' ''<left>
 xnoremap ( xi()<Esc>P
 nnoremap <Up> <Nop>
 nnoremap <Left> <Nop>
@@ -226,17 +227,28 @@ highlight IM gui=Bold guifg=White guibg=16
 highlight SAVED guibg=Red
 highlight MODIFIED guibg=Gold
 
+highlight ARROWSAVED guibg=#282828 guifg=Red
+highlight ARROWMOD guibg=#282828 guifg=Gold
+highlight ARROWRIGHT guibg=#282828 guifg=Gray
+
 function! s:status_info()
-    setlocal statusline+=\ \ \ \ %#SL1#
+    setlocal statusline+=%#SL1#
     setlocal statusline+=\ \ %{expand('%:p:h:t')}/%t
     setlocal statusline+=%#SL2#
     " setlocal statusline+=\ \ [%{gitbranch#name()}]
-    setlocal statusline+=%=%y\ %#SL3#\ ℓ\ %l/%L\ \ 𝐜\ %c/%{strlen(join([getline('.'),'']))}\ 
+    setlocal statusline+=%=%y
+
+    setlocal statusline+=\ %#ARROWRIGHT#
+    setlocal statusline+=
+    setlocal statusline+=%#SL3#\ ℓ\ %l/%L\ \ 𝐜\ %c/%{strlen(join([getline('.'),'']))}\ 
 endfunction
 
 function! s:status_saved()
     if !g:in_goyo
         setlocal statusline=%#SAVED#
+        setlocal statusline+=\ \ \ \ 
+        setlocal statusline+=%#ARROWSAVED#
+        setlocal statusline+=
         call s:status_info()
     endif
 endfunction
@@ -244,6 +256,9 @@ endfunction
 function! s:status_modified()
     if !g:in_goyo && &modified
         setlocal statusline=%#MODIFIED#
+        setlocal statusline+=\ \ \ \ 
+        setlocal statusline+=%#ARROWMOD#
+        setlocal statusline+=
         call s:status_info()
     endif
 endfunction
@@ -308,4 +323,7 @@ autocmd VimEnter {} :Files
 " }}}
 
 " let g:coc_start_at_startup = v:false
+
 au VimLeave * set guicursor=a:ver1-blinkoff0
+
+let g:livepreview_previewer = 'zathura'
