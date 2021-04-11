@@ -1,16 +1,34 @@
 #!/usr/bin/env bash
 
-# Terminate already running bar instances
-killall -q polybar
-# If all your bars have ipc enabled, you can also use 
-# polybar-msg cmd quit
+dir="$HOME/.config/polybar"
+themes=(`ls --hide="launch.sh" $dir`)
 
-# Launch bar1 and bar2
-echo "---" | tee -a /tmp/polybar1.log /tmp/polybar2.log
+launch_bar() {
+	# Terminate already running bar instances
+	killall -q polybar
 
-# polybar example 2>&1 | tee -a /tmp/polybar1.log & disown
+	# Wait until the processes have been shut down
+	while pgrep -u $UID -x polybar >/dev/null; do sleep 1; done
 
-polybar eDP1 2>&1 | tee -a /tmp/polybar1.log & disown
-polybar HDMI1 2>&1 | tee -a /tmp/polybar1.log & disown
+	# Launch the bar
+	if [[ "$style" == "hack" || "$style" == "cuts" || "$style" == "forest" ]]; then
+		# polybar -q top -c "$dir/$style/config.ini" &
+		# polybar -q bottom -c "$dir/$style/config.ini" &
+        if type "xrandr"; then
+          for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
+            MONITOR=$m polybar --reload -c "$dir/$style/config.ini" -q bottom &
+            MONITOR=$m polybar --reload -c "$dir/$style/config.ini" -q top &
+          done
+        else
+          polybar --reload -c "$dir/$style/config.ini" -q bottom &
+          polybar --reload -c "$dir/$style/config.ini" -q top &
+        fi
+	elif [[ "$style" == "pwidgets" ]]; then
+		bash "$dir"/pwidgets/launch.sh --main
+	else
+		polybar -q main -c "$dir/$style/config.ini" &	
+	fi
+}
 
-echo "Bars launched..."
+style="forest"
+launch_bar
