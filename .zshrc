@@ -94,6 +94,7 @@ setopt PROMPT_SUBST
 function () {
   local SUFFIX=$(printf '%%F{red}$%%f')
   # export PS1="%B${SUFFIX}%b%F{yellow}%B%(1j.*.)%(?..!)%b%f "
+  # export PS1="%F{green}${SSH_TTY:+%n@%m}%f${SSH_TTY:+:}%B%F{#2222DD}%1~%F{yellow}%(1j.*.)%(?..!)%f${SUFFIX}%b "
   export PS1="%F{green}${SSH_TTY:+%n@%m}%f${SSH_TTY:+:}%F{blue}%1~%F{yellow}%(1j.*.)%(?..!)%f${SUFFIX} "
   if [[ -n "$TMUXING" ]]; then
     # Outside tmux, ZLE_RPROMPT_INDENT ends up eating the space after PS1, and
@@ -205,7 +206,7 @@ function -report-start-time() {
     fi
     ELAPSED="${ELAPSED}${SECS}"
     # export RPROMPT="$RPROMPT_BASE %F{cyan}| %{$__TABLE[ITALIC_ON]%}${ELAPSED}%{$__TABLE[ITALIC_OFF]%}%f"
-    export RPROMPT="$RPROMPT_BASE %F{cyan}| ${ELAPSED}%f"
+    export RPROMPT="%F{cyan}%{$__TABLE[ITALIC_ON]%}${ELAPSED}%{$__TABLE[ITALIC_OFF]%}%f $RPROMPT_BASE"
     unset ZSH_START_TIME
   else
     export RPROMPT="$RPROMPT_BASE"
@@ -289,12 +290,17 @@ alias ls="ls --color=always"
 alias vrc="vim ~/Desktop/Tom/dotfiles/.vimrc"
 alias zrc="vim ~/.zshrc"
 alias irc="vim ~/.config/i3/config"
+alias rrc="vim ~/.config/ranger/rc.conf"
 alias gco="git checkout"
 alias ima="cd ~/Desktop/Tom/Imagine/imagine-compiler"
 
 alias grd="cd ~/Desktop/Tom/Grad/"
 
+alias smi="sudo make install"
+
 alias noop=":"
+
+alias hs_tmp="cp ~/Desktop/Tom/Haskell/cf_template.hs ."
 
 unset PATH
 PATH=/bin
@@ -306,13 +312,18 @@ PATH=$PATH:/usr/local/sbin
 PATH=$PATH:$HOME/.local/bin
 PATH=$PATH:$HOME/.cargo/bin
 PATH=$PATH:/usr/sbin/
-PATH=$PATH:/home/tomaz1502/.cabal/bin/
+PATH=$PATH:/home/tomazgomes/.cabal/bin/
 PATH=$PATH:/snap/bin/
 PATH=$PATH:/usr/local/
-PATH=$PATH:/home/tomaz1502/.local/bin
-PATH=$PATH:/home/tomaz1502/.elan/bin/   
-PATH=$PATH:/home/tomaz1502/Tools/MyClis/
+PATH=$PATH:/home/tomazgomes/.local/bin
+PATH=$PATH:/home/tomazgomes/.elan/bin/   
 export PATH    
 
 export EDITOR="nvim"
-export BROWSER="chromium"
+export BROWSER="firefox"
+
+# blinking bar cursor
+echo -e -n "\x1b[\x35 q"
+
+alias run="rm -rf * .* && cp ~/Desktop/Tom/Imagine/generated-node-rest/node-demo-rest.im . && imagine compile node-demo-rest.im --server=https://localhost:3000 && yarn install && yarn coverage"
+
