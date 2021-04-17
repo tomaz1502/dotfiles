@@ -10,14 +10,14 @@
       ./hardware-configuration.nix
     ];
 
-  # Use the GRUB 2 boot loader.
+
+  # Use the systemd-boot EFI boot loader.
+  # boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
-  # boot.loader.grub.efiSupport = true;
-  # boot.loader.grub.efiInstallAsRemovable = true;
-  # boot.loader.efi.efiSysMountPoint = "/boot/efi";
-  # Define on which hard drive you want to install Grub.
-  boot.loader.grub.device = "nodev"; # or "nodev" for efi only
+  boot.loader.grub.devices = [ "nodev" ];
+  boot.loader.grub.efiSupport = true;
+  boot.loader.grub.useOSProber = true;
 
   # networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -29,7 +29,8 @@
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
   networking.useDHCP = false;
-  networking.interfaces.enp0s3.useDHCP = true;
+  networking.interfaces.enp3s0.useDHCP = true;
+  networking.interfaces.wlo1.useDHCP = true;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -49,31 +50,13 @@
   # Enable the GNOME 3 Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome3.enable = true;
+  # services.xserver.desktopManager.kde4.enable = true;
+ 
+  # use NVIDIA card
+  nixpkgs.config.allowUnfree = true;
+  services.xserver.videoDrivers = [ "intel" ];
+  # hardware.opengl.driSupport32Bit = true;
   
-#  environment.pathsToLink = [ "/libexec" ]; # links /libexec from derivations to /run/current-system/sw 
-#  services.xserver = {
-#    enable = true;
-#
-#    desktopManager = {
-#      xterm.enable = false;
-#    };
-#   
-#    displayManager = {
-#        defaultSession = "none+i3";
-#    };
-#
-#    windowManager.i3 = {
-#      enable = true;
-#      extraPackages = with pkgs; [
-#        dmenu #application launcher most people use
-#        i3status # gives you the default i3 status bar
-#        i3lock #default i3 screen locker
-#        i3blocks #if you are planning on using i3blocks over i3status
-#     ];
-#     package = pkgs.i3-gaps;
-#    };
-#  };
-
   # Configure keymap in X11
   # services.xserver.layout = "us";
   # services.xserver.xkbOptions = "eurosign:e";
@@ -96,32 +79,55 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-
-  nixpkgs.config.allowUnfree = true;
-
   environment.systemPackages = with pkgs; [
-    wget
-    vim 
-    firefox
-    emacs
+    vim
     neovim
+    emacs
     vscode
-    agda
-    ghc 
-    stack
+
     git
-    python
-    gcc
-    cargo
-    tdesktop
-    slack
-    discord
-    zoom-us
-    nodejs
-    lean
-    ranger
+    curl
+    wget
+
+    zsh
+    tmux
     alacritty
+    ranger
+    htop
+    neofetch
+
+    zoom-us
+    slack
+    tdesktop
+    discord
+    
+    google-chrome
+
+    gcc
+    glib
+    gnumake
+    python
+    ghc
+    cargo
+    agda
+    lean
+    nodejs
+
     haskellPackages.haskell-language-server
+    nodePackages.typescript
+
+    lxappearance
+    gnome3.gnome-tweak-tool
+    pop-gtk-theme
+    pop-icon-theme
+  ];
+
+  fonts.fonts = with pkgs; [
+    fira-code
+    fira-mono
+    fira
+    (nerdfonts.override { fonts = [ "FiraCode" "FiraMono" ]; })
+    roboto-slab
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
