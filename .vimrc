@@ -3,7 +3,6 @@
 
 "Plugged {{{
 call plug#begin('~/.vim/autoload/plugged')
-
 Plug 'machakann/vim-highlightedyank'
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -11,24 +10,21 @@ Plug 'junegunn/fzf.vim'
 
 Plug 'chriskempson/base16-vim'
 
-" Plug 'xolox/vim-notes'
-" Plug 'xolox/vim-misc'
-
 Plug 'itchyny/vim-gitbranch'
 
 Plug 'neovimhaskell/haskell-vim'
 Plug 'junegunn/goyo.vim'
 Plug 'tpope/vim-commentary'
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 Plug 'jremmen/vim-ripgrep'
-
-" Maybe?
-" Plug 'honza/vim-snippets'
 
 Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
 Plug 'justinmk/vim-dirvish'
 
+" Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 call plug#end()
 "}}}
 
@@ -62,6 +58,10 @@ set termguicolors
 set nobackup
 set nowritebackup
 set noswapfile
+
+if has("nvim")
+    set inccommand=nosplit
+endif
 
 highlight Comment gui=Italic
 " if exists('##TextYankPost')
@@ -175,12 +175,27 @@ function! s:check_back_space() abort
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-let g:coc_snippet_next = '<tab>'
+" let g:coc_snippet_next = '<tab>'
 
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
+
+" Use <C-l> for trigger snippet expand.
+imap <C-l> <Plug>(coc-snippets-expand)
+
+" " Use <C-j> for select text for visual placeholder of snippet.
+" vmap <C-j> <Plug>(coc-snippets-select)
+
+" " Use <C-j> for jump to next placeholder, it's default of coc.nvim
+" let g:coc_snippet_next = '<c-j>'
+
+" " Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+" let g:coc_snippet_prev = '<c-k>'
+
+" " Use <C-j> for both expand and jump (make expand higher priority.)
+" imap <C-j> <Plug>(coc-snippets-expand-jump)
 
 "Maps
 nmap <silent> gd <Plug>(coc-definition)
@@ -320,6 +335,7 @@ autocmd FocusLost,WinLeave * call s:blur_window()
 autocmd Filetype tex setl updatetime=999999
 autocmd VimEnter {} :Files
 
+autocmd Filetype rust nnoremap <Leader>F :!rustfmt %<CR>:e!<CR>
 " }}}
 
 " let g:coc_start_at_startup = v:false
@@ -327,3 +343,5 @@ autocmd VimEnter {} :Files
 au VimLeave * set guicursor=a:ver1-blinkoff0
 
 let g:livepreview_previewer = 'zathura'
+
+set cursorline
