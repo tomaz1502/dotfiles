@@ -302,8 +302,8 @@ alias noop=":"
 
 alias hs_tmp="cp ~/Desktop/Tom/Haskell/cf_template.hs ."
 
-unset PATH
-PATH=/bin
+# unset PATH
+PATH=$PATH:/bin
 PATH=$PATH:$HOME/bin
 PATH=$PATH:$HOME/.zsh/bin
 PATH=$PATH:$HOME/.vim/pack/bundle/opt/vcs-jump/bin
@@ -313,7 +313,7 @@ PATH=$PATH:$HOME/.local/bin
 PATH=$PATH:$HOME/.cargo/bin
 PATH=$PATH:/usr/sbin/
 PATH=$PATH:/home/tomazgomes/.cabal/bin/
-PATH=$PATH:/snap/bin/
+#PATH=$PATH:/snap/bin/
 PATH=$PATH:/usr/local/
 PATH=$PATH:/home/tomazgomes/.local/bin
 PATH=$PATH:/home/tomazgomes/.elan/bin/   

@@ -4,7 +4,33 @@
 
 { config, pkgs, ... }:
 
-{
+
+  let
+    nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
+      export __NV_PRIME_RENDER_OFFLOAD=1
+      export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
+      export __GLX_VENDOR_LIBRARY_NAME=nvidia
+      export __VK_LAYER_NV_optimus=NVIDIA_only
+      exec -a "$0" "$@"
+    '';
+  in
+  {
+  
+  # NVIDIA STUFF
+  nixpkgs.config.allowUnfree = true;
+  services.xserver.videoDrivers = [ "nvidia" "modeset" ];
+  hardware.nvidia = {
+    prime = {
+	    offload.enable = true;
+
+	    # Bus ID of the Intel GPU. You can find it using lspci, either under 3D or VGA
+	    intelBusId = "PCI:0:2:0";
+
+	    # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
+	    nvidiaBusId = "PCI:1:0:0";
+    };
+  };
+
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
@@ -31,6 +57,7 @@
   networking.useDHCP = false;
   networking.interfaces.enp3s0.useDHCP = true;
   networking.interfaces.wlo1.useDHCP = true;
+  networking.networkmanager.enable = true;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -45,16 +72,19 @@
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
-
-
-  # Enable the GNOME 3 Desktop Environment.
+  # Enable SDDM
+#  services.xserver.displayManager.sddm.enable = true;
+  # Enable GDM
   services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome3.enable = true;
-  # services.xserver.desktopManager.kde4.enable = true;
+
+  # Gnome or Plasma?
+  services.xserver.desktopManager.gnome.enable = true;
+# services.xserver.desktopManager.plasma5.enable = true;
+
  
   # use NVIDIA card
-  nixpkgs.config.allowUnfree = true;
-  services.xserver.videoDrivers = [ "intel" ];
+  # services.xserver.videoDrivers = [ "intel" ];
+  # hardware.bumblebee.enable = true;
   # hardware.opengl.driSupport32Bit = true;
   
   # Configure keymap in X11
@@ -71,11 +101,17 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
+  # Bluetooth
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.tomazgomes = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager" ]; 
   };
+
+
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -95,6 +131,8 @@
     ranger
     htop
     neofetch
+    fzf
+    ripgrep
 
     zoom-us
     slack
@@ -113,13 +151,18 @@
     lean
     nodejs
 
+    ccls
     haskellPackages.haskell-language-server
     nodePackages.typescript
 
+    networkmanager
     lxappearance
     gnome3.gnome-tweak-tool
     pop-gtk-theme
     pop-icon-theme
+    home-manager
+
+    nvidia-offload 
   ];
 
   fonts.fonts = with pkgs; [
@@ -155,7 +198,6 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "20.09"; # Did you read the comment?
-
+  system.stateVersion = "21.05"; # Did you read the comment?
 }
 
