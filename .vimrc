@@ -42,7 +42,7 @@ set tabstop=4
 set expandtab
 set shiftwidth=4
 set noshowmode
-set colorcolumn=80
+let g:colorcolumn=join(range(80,256), ',')
 set textwidth=80
 let mapleader=","
 syntax on
@@ -285,7 +285,7 @@ function! s:focus_window() abort
   "   endfor
   "   let w:matches=[]
   " endif
-  let &colorcolumn="80"
+  let &colorcolumn=join(range(80,256), ',')
   if &modified
       call s:status_modified()
   else
@@ -345,3 +345,5 @@ au VimLeave * set guicursor=a:ver1-blinkoff0
 let g:livepreview_previewer = 'zathura'
 
 set cursorline
+
+set nornu
