@@ -13,10 +13,11 @@ Plug 'chriskempson/base16-vim'
 Plug 'itchyny/vim-gitbranch'
 
 Plug 'neovimhaskell/haskell-vim'
+Plug 'monkoose/fzf-hoogle.vim'
+
 Plug 'junegunn/goyo.vim'
 Plug 'tpope/vim-commentary'
 
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 Plug 'jremmen/vim-ripgrep'
 
@@ -30,6 +31,10 @@ call plug#end()
 
 "Fundamentals {{{      
 
+" color column
+let &colorcolumn=join(range(80, 256), ',')
+
+
 " syntax enable
 colorscheme base16-default-dark
 filetype plugin on
@@ -42,7 +47,6 @@ set tabstop=4
 set expandtab
 set shiftwidth=4
 set noshowmode
-set colorcolumn=80
 set textwidth=80
 let mapleader=","
 syntax on
@@ -64,11 +68,9 @@ if has("nvim")
 endif
 
 highlight Comment gui=Italic
-" if exists('##TextYankPost')
-"     autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank('Substitute', 200)
-" endif
-
-if !exists('##TextYankPost')
+if exists('##TextYankPost')
+  autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank('Substitute', 200)
+else
   map y <Plug>(highlightedyank)
 endif
 
@@ -161,6 +163,10 @@ let g:haskell_indent_guard = 4
 let g:haskell_indent_case_alternative = 4
 " }}}
 
+" Hoogle {{{
+let g:hoogle_fzf_window = {"window": "call hoogle#floatwindow(32, 132)"}
+"}}}
+
 " COC {{{
 "Tab auto complete
 
@@ -233,7 +239,6 @@ let g:highlightedyank_highlight_duration = 200
 " }}}
 
 " Status Line {{{ 
-
 highlight SL1 gui=Bold guifg=#b8b8b8 guibg=#282828
 highlight SL2 guifg=#b8b8b8 guibg=#282828
 highlight SL3 guifg=Black guibg=Gray
@@ -285,7 +290,7 @@ function! s:focus_window() abort
   "   endfor
   "   let w:matches=[]
   " endif
-  let &colorcolumn="80"
+  let &colorcolumn=join(range(80, 256), ',')
   if &modified
       call s:status_modified()
   else
@@ -321,7 +326,6 @@ endfunction
 " }}} 
 
 " Autocmds {{{ 
-
 autocmd InsertEnter * echohl IM | echo "  -- Insert Mode --" | echohl None
 autocmd InsertLeave * echo ""
 
@@ -334,8 +338,6 @@ autocmd FocusLost,WinLeave * call s:blur_window()
 
 autocmd Filetype tex setl updatetime=999999
 autocmd VimEnter {} :Files
-
-autocmd Filetype rust nnoremap <Leader>F :!rustfmt %<CR>:e!<CR>
 " }}}
 
 " let g:coc_start_at_startup = v:false
@@ -345,3 +347,4 @@ au VimLeave * set guicursor=a:ver1-blinkoff0
 let g:livepreview_previewer = 'zathura'
 
 set cursorline
+
