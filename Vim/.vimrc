@@ -325,4 +325,4 @@ autocmd Filetype tex setl updatetime=999999
 
 au VimLeave * set guicursor=a:ver1-blinkoff0
 
-let g:livepreview_previewer = 'zathura'
+" let g:livepreview_previewer = 'zathura'
