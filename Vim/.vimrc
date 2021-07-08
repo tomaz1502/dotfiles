@@ -242,7 +242,7 @@ function! s:status_info()
 
     setlocal statusline+=\ %#ARROWRIGHT#
     setlocal statusline+=
-    setlocal statusline+=%#SL3#\ ℓ\ %l/%L\ \ 𝐜\ %c/%{strlen(join([getline('.'),'']))}\ 
+    setlocal statusline+=%#SL3#\ ℓ\ %l/%L\ \ 𝐜\ %c/%{&columns}\ 
 endfunction
 
 function! s:status_saved()
