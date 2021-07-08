@@ -43,6 +43,7 @@ set tabstop=4
 set expandtab
 set shiftwidth=4
 set noshowmode
+let g:colorcolumn=join(range(80,256), ',')
 set textwidth=80
 set cursorline
 let mapleader=","
