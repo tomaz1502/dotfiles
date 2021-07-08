@@ -3,8 +3,6 @@
 
 "Plugged {{{
 call plug#begin('~/.vim/autoload/plugged')
-Plug 'machakann/vim-highlightedyank'
-
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
@@ -30,10 +28,8 @@ call plug#end()
 "}}}
 
 "Fundamentals {{{      
-
 " color column
 let &colorcolumn=join(range(80, 256), ',')
-
 
 " syntax enable
 colorscheme base16-default-dark
@@ -48,6 +44,7 @@ set expandtab
 set shiftwidth=4
 set noshowmode
 set textwidth=80
+set cursorline
 let mapleader=","
 syntax on
 
@@ -69,11 +66,8 @@ endif
 
 highlight Comment gui=Italic
 if exists('##TextYankPost')
-  autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank('Substitute', 200)
-else
-  map y <Plug>(highlightedyank)
+    autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank { higroup="Substitute", timeout=200 }
 endif
-
 "}}}
 
 " All Maps {{{
@@ -123,7 +117,6 @@ nnoremap / /\v
 "}}}
 
 " Plugins Config {{{
-
 " Goyo {{{
 " Hide tmux status bar
 let g:in_goyo=0
@@ -162,10 +155,6 @@ let g:haskell_indent_in = 4
 let g:haskell_indent_guard = 4
 let g:haskell_indent_case_alternative = 4
 " }}}
-
-" Hoogle {{{
-let g:hoogle_fzf_window = {"window": "call hoogle#floatwindow(32, 132)"}
-"}}}
 
 " COC {{{
 "Tab auto complete
@@ -228,14 +217,6 @@ highlight CocErrorSign guifg=#ff422b
 highlight CocWarningVirtualText guifg=#fab005 gui=Italic
 highlight CocInfoSign guifg=#fab005
 "}}}
-
-" Yank Highlight {{{ 
-
-highlight HighlightedyankRegion ctermfg=10 ctermbg=3 guifg=#282828 guibg=#f7ca88
-let g:highlightedyank_highlight_duration = 200
-
-"}}}
-
 " }}}
 
 " Status Line {{{ 
@@ -337,7 +318,6 @@ autocmd BufEnter,FocusGained,VimEnter,WinEnter * call s:focus_window()
 autocmd FocusLost,WinLeave * call s:blur_window()
 
 autocmd Filetype tex setl updatetime=999999
-autocmd VimEnter {} :Files
 " }}}
 
 " let g:coc_start_at_startup = v:false
@@ -345,6 +325,3 @@ autocmd VimEnter {} :Files
 au VimLeave * set guicursor=a:ver1-blinkoff0
 
 let g:livepreview_previewer = 'zathura'
-
-set cursorline
-
