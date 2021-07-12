@@ -22,7 +22,6 @@ Plug 'jremmen/vim-ripgrep'
 Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
 Plug 'justinmk/vim-dirvish'
 
-" Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 call plug#end()
 "}}}
@@ -90,8 +89,8 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 nnoremap Y y$
 
-nnoremap <silent> <Leader>ev :vsp ~/Desktop/Tom/dotfiles/.vimrc<CR>
-nnoremap <Leader>es :source ~/Desktop/Tom/dotfiles/.vimrc<CR>
+nnoremap <silent> <Leader>ev :vsp ~/Desktop/Tom/dotfiles/Vim/.vimrc<CR>
+nnoremap <Leader>es :source ~/Desktop/Tom/dotfiles/Vim/.vimrc<CR>
 
 map <silent> <Leader>t :Files<CR>
 map <silent> <Leader>b :Buffers<CR>
@@ -312,8 +311,7 @@ autocmd InsertEnter * echohl IM | echo "  -- Insert Mode --" | echohl None
 autocmd InsertLeave * echo ""
 
 autocmd TextChanged,TextChangedI,TextChangedP,InsertChange * call s:status_modified()
-autocmd BufWrite * call s:status_saved()
-autocmd WinNew,TabNew,BufNew,BufRead * call s:status_saved()
+autocmd WinNew,TabNew,BufNew,BufRead,BufWrite * call s:status_saved()
 
 autocmd BufEnter,FocusGained,VimEnter,WinEnter * call s:focus_window()
 autocmd FocusLost,WinLeave * call s:blur_window()
@@ -322,7 +320,5 @@ autocmd Filetype tex setl updatetime=999999
 " }}}
 
 " let g:coc_start_at_startup = v:false
-
 au VimLeave * set guicursor=a:ver1-blinkoff0
-
 " let g:livepreview_previewer = 'zathura'
