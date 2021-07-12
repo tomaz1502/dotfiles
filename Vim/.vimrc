@@ -319,5 +319,6 @@ autocmd FocusLost,WinLeave * call s:blur_window()
 autocmd Filetype tex setl updatetime=999999
 " }}}
 
+
 " let g:coc_start_at_startup = v:false
 au VimLeave * set guicursor=a:ver1-blinkoff0
