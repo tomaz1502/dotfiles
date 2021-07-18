@@ -13,7 +13,6 @@ Plug 'itchyny/vim-gitbranch'
 Plug 'neovimhaskell/haskell-vim'
 Plug 'monkoose/fzf-hoogle.vim'
 
-Plug 'junegunn/goyo.vim'
 Plug 'tpope/vim-commentary'
 
 Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
@@ -23,12 +22,12 @@ Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
 Plug 'justinmk/vim-dirvish'
 
 Plug 'honza/vim-snippets'
+Plug 'folke/zen-mode.nvim'
 call plug#end()
 "}}}
 
 "Fundamentals {{{      
 " color column
-let &colorcolumn=join(range(80, 256), ',')
 
 " syntax enable
 colorscheme base16-default-dark
@@ -42,29 +41,29 @@ set tabstop=4
 set expandtab
 set shiftwidth=4
 set noshowmode
-let g:colorcolumn=join(range(80,256), ',')
 set textwidth=80
 set cursorline
-let mapleader=","
-syntax on
-
+set clipboard+=unnamedplus
 set hidden
 set wildmenu
 set signcolumn=no
 set foldmethod=marker
 set termguicolors
-""set wildignore+=**/node_modules/**
-""set path+=**
-
 set nobackup
 set nowritebackup
 set noswapfile
+syntax on
+let g:colorcolumn=join(range(80,256), ',')
+let mapleader=","
+highlight Comment gui=Italic
+
+""set wildignore+=**/node_modules/**
+""set path+=**
 
 if has("nvim")
     set inccommand=nosplit
 endif
 
-highlight Comment gui=Italic
 if exists('##TextYankPost')
     autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank { higroup="Substitute", timeout=200 }
 endif
@@ -117,32 +116,6 @@ nnoremap / /\v
 "}}}
 
 " Plugins Config {{{
-" Goyo {{{
-" Hide tmux status bar
-let g:in_goyo=0
-
-function! s:goyo_enter()
-    if exists('$TMUX')
-        silent !tmux set status off
-    endif
-    let g:in_goyo=1
-    set laststatus=0
-endfunction
-
-function! s:goyo_leave()
-    if exists('$TMUX')
-        silent !tmux set status on
-    endif
-    let g:in_goyo=0
-    set laststatus=2
-endfunction
-
-autocmd! User GoyoEnter nested call <SID>goyo_enter()
-autocmd! User GoyoLeave nested call <SID>goyo_leave()
-
-let g:goyo_width=130
-"}}}
-
 " Haskell Indent {{{
 let g:haskell_indent_if = 4
 let g:haskell_indent_case = 4
@@ -217,6 +190,19 @@ highlight CocErrorSign guifg=#ff422b
 highlight CocWarningVirtualText guifg=#fab005 gui=Italic
 highlight CocInfoSign guifg=#fab005
 "}}}
+
+" ZenMode {{{
+
+lua << EOF
+  require("zen-mode").setup {
+
+    plugins = {
+      tmux = { enabled = true },
+    }
+  }
+
+EOF
+" }}}
 " }}}
 
 " Status Line {{{ 
@@ -245,17 +231,15 @@ function! s:status_info()
 endfunction
 
 function! s:status_saved()
-    if !g:in_goyo
-        setlocal statusline=%#SAVED#
-        setlocal statusline+=\ \ \ \ 
-        setlocal statusline+=%#ARROWSAVED#
-        setlocal statusline+=
-        call s:status_info()
-    endif
+    setlocal statusline=%#SAVED#
+    setlocal statusline+=\ \ \ \ 
+    setlocal statusline+=%#ARROWSAVED#
+    setlocal statusline+=
+    call s:status_info()
 endfunction
 
 function! s:status_modified()
-    if !g:in_goyo && &modified
+    if &modified
         setlocal statusline=%#MODIFIED#
         setlocal statusline+=\ \ \ \ 
         setlocal statusline+=%#ARROWMOD#
@@ -298,11 +282,9 @@ function! s:blur_window() abort
   "   let l:start=l:next
   " endwhile
   let &colorcolumn=join(range(1,256), ',')
-  if !g:in_goyo
-      setlocal statusline=%#SL2#
-      setlocal statusline+=\ \ \ \ 
-      setlocal statusline+=\ \ %f
-  endif
+  setlocal statusline=%#SL2#
+  setlocal statusline+=\ \ \ \ 
+  setlocal statusline+=\ \ %f
 endfunction
 " }}} 
 
@@ -318,7 +300,6 @@ autocmd FocusLost,WinLeave * call s:blur_window()
 
 autocmd Filetype tex setl updatetime=999999
 " }}}
-
 
 " let g:coc_start_at_startup = v:false
 au VimLeave * set guicursor=a:ver1-blinkoff0
