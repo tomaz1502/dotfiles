@@ -15,7 +15,6 @@ Plug 'monkoose/fzf-hoogle.vim'
 
 Plug 'tpope/vim-commentary'
 
-Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 Plug 'jremmen/vim-ripgrep'
 
 Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
@@ -23,6 +22,15 @@ Plug 'justinmk/vim-dirvish'
 
 Plug 'honza/vim-snippets'
 Plug 'folke/zen-mode.nvim'
+
+
+Plug 'Julian/lean.nvim'
+Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-lua/plenary.nvim'
+
+Plug 'hrsh7th/nvim-compe'  " For LSP completion
+Plug 'hrsh7th/vim-vsnip'   " For snippets
+Plug 'andrewradev/switch.vim'  " For Lean switch support
 call plug#end()
 "}}}
 
@@ -55,6 +63,7 @@ set noswapfile
 syntax on
 let g:colorcolumn=join(range(80,256), ',')
 let mapleader=","
+let maplocalleader=","
 highlight Comment gui=Italic
 
 ""set wildignore+=**/node_modules/**
@@ -129,68 +138,6 @@ let g:haskell_indent_guard = 4
 let g:haskell_indent_case_alternative = 4
 " }}}
 
-" COC {{{
-"Tab auto complete
-
-inoremap <silent><expr> <TAB>
-  \ pumvisible() ? coc#_select_confirm() :
-  \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-  \ <SID>check_back_space() ? "\<TAB>" :
-  \ coc#refresh()
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" let g:coc_snippet_next = '<tab>'
-
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-
-" Use <C-l> for trigger snippet expand.
-imap <C-l> <Plug>(coc-snippets-expand)
-
-" " Use <C-j> for select text for visual placeholder of snippet.
-" vmap <C-j> <Plug>(coc-snippets-select)
-
-" " Use <C-j> for jump to next placeholder, it's default of coc.nvim
-" let g:coc_snippet_next = '<c-j>'
-
-" " Use <C-k> for jump to previous placeholder, it's default of coc.nvim
-" let g:coc_snippet_prev = '<c-k>'
-
-" " Use <C-j> for both expand and jump (make expand higher priority.)
-" imap <C-j> <Plug>(coc-snippets-expand-jump)
-
-"Maps
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gr <Plug>(coc-references)
-nmap <silent> K :call <SID>show_documentation()<CR>
-nmap <leader>rn <Plug>(coc-rename)
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
-nmap <silent> <Leader>cc :CocConfig<CR>
-nmap <silent> <Leader>sc :CocList diagnostics<CR>
-nmap <silent> <Leader>A :CocAction<CR>
-xmap <silent> <leader>f  <Plug>(coc-format-selected)
-command! -nargs=0 Format :call CocAction('format')
-
-highlight CocErrorVirtualText guifg=#ff422b gui=Italic
-highlight CocErrorSign guifg=#ff422b
-highlight CocWarningVirtualText guifg=#fab005 gui=Italic
-highlight CocInfoSign guifg=#fab005
-"}}}
-
 " ZenMode {{{
 lua << EOF
   require("zen-mode").setup {
@@ -213,7 +160,7 @@ EOF
 " Status Line {{{ 
 highlight SL1 gui=Bold guifg=#b8b8b8 guibg=#282828
 highlight SL2 guifg=#b8b8b8 guibg=#282828
-highlight SL3 guifg=Black guibg=Gray
+highlight SL3 guifg=#282828 guibg=Gray
 
 highlight IM gui=Bold guifg=White guibg=16
 highlight SAVED guibg=Red
@@ -233,6 +180,7 @@ function! s:status_info()
     setlocal statusline+=\ %#ARROWRIGHT#
     setlocal statusline+=
     setlocal statusline+=%#SL3#\ ℓ\ %l/%L\ \ 𝐜\ %c/%{&columns}\ 
+    " setlocal statusline+=%#SL3#\ L\ %l/%L\ \ C\ %c/%{&columns}\ 
 endfunction
 
 function! s:status_saved()
@@ -306,5 +254,141 @@ autocmd FocusLost,WinLeave * call s:blur_window()
 autocmd Filetype tex setl updatetime=999999
 " }}}
 
-" let g:coc_start_at_startup = v:false
+set pumheight=6
+set completeopt=menuone,noselect
+let g:compe = {}
+let g:compe.enabled = v:true
+let g:compe.autocomplete = v:true
+let g:compe.debug = v:false
+let g:compe.min_length = 1
+let g:compe.preselect = 'enable'
+let g:compe.documentation = v:true
+
+let g:compe.source = {}
+let g:compe.source.path = v:true
+let g:compe.source.buffer = v:true
+let g:compe.source.nvim_lsp = v:true
+
+lua << EOF
+local t = function(str)
+  return vim.api.nvim_replace_termcodes(str, true, true, true)
+end
+local check_back_space = function()
+    local col = vim.fn.col('.') - 1
+    return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
+end
+
+-- Use (s-)tab to:
+--- move to prev/next item in completion menuone
+--- jump to prev/next snippet's placeholder
+_G.tab_complete = function()
+  if vim.fn.pumvisible() == 1 then
+    return t "<C-n>"
+  elseif vim.fn['vsnip#available'](1) == 1 then
+    return t "<Plug>(vsnip-expand-or-jump)"
+  elseif check_back_space() then
+    return t "<Tab>"
+  else
+    return vim.fn['compe#complete']()
+  end
+end
+_G.s_tab_complete = function()
+  if vim.fn.pumvisible() == 1 then
+    return t "<C-p>"
+  elseif vim.fn['vsnip#jumpable'](-1) == 1 then
+    return t "<Plug>(vsnip-jump-prev)"
+  else
+    -- If <S-Tab> is not working in your terminal, change it to <C-h>
+    return t "<S-Tab>"
+  end
+end
+
+vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
+vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
+vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
+vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
+
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+  -- Enable completion triggered by <c-x><c-o>
+  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+  -- Mappings.
+  local opts = { noremap=true, silent=true }
+
+  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  buf_set_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', '<leader>A', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  buf_set_keymap('n', '<leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+end
+-- Use a loop to conveniently call 'setup' on multiple servers and
+-- map buffer local keybindings when the language server attaches
+
+local nvim_lsp = require('lspconfig')
+
+require'lspconfig'.clangd.setup{ on_attach = on_attach,
+                                 init_options = { fallbackFlags = { "-std=c++17" } }
+                               }
+require'lspconfig'.hls.setup{ on_attach = on_attach }
+require'lspconfig'.rust_analyzer.setup{ on_attach = on_attach }
+
+require('lean').setup {
+  lsp = { on_attach = on_attach },
+
+  lsp3 = { on_attach = on_attach },
+
+  -- Abbreviation support
+  abbreviations = {
+    -- Set one of the following to true to enable abbreviations
+    builtin = true, -- built-in expander
+    compe = true, -- nvim-compe source
+    snippets = false, -- snippets.nvim source
+    -- additional abbreviations:
+    extra = {
+      -- Add a \wknight abbreviation to insert ♘
+      --
+      -- Note that the backslash is implied, and that you of
+      -- course may also use a snippet engine directly to do
+      -- this if so desired.
+      wknight = '♘',
+    },
+    -- Change if you don't like the backslash
+    -- (comma is a popular choice on French keyboards)
+    leader ='\\',
+  },
+
+  -- Enable suggested mappings?
+  --
+  -- false by default, true to enable
+  mappings = true,
+
+  -- Infoview support
+  infoview = {
+    -- Automatically open an infoview on entering a Lean buffer?
+    autoopen = true,
+    -- Set the infoview windows' widths
+    width = 50,
+  },
+
+  -- Progress bar support
+  progress_bars = {
+    -- Enable the progress bars?
+    enable = true,
+    -- Use a different priority for the signs
+    priority = 10,
+  },
+}
+EOF
+
 au VimLeave * set guicursor=a:ver1-blinkoff0
