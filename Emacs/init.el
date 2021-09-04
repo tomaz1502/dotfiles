@@ -117,7 +117,6 @@
 
 ;; Key Bindings
 (global-set-key (kbd "C-x C-x") 'evil-mode)
-(global-set-key (kbd "M-a")     'neotree-toggle)
 (global-set-key (kbd "C-x C-l") (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
 
 (global-set-key (kbd "C-=") 'text-scale-increase)
