@@ -27,6 +27,8 @@
 	(package-refresh-contents)
 	(package-install 'use-package))
 
+(setq use-package-always-ensure t)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -46,17 +48,14 @@
 (global-hl-line-mode t)
 
 (use-package evil
-  :ensure t
   :config (evil-mode)
 )
 
 (use-package which-key
-  :ensure t
   :config (which-key-mode)
 )
 
 (use-package auto-complete
-  :ensure t
   :init
     (progn
 	(ac-config-default)
@@ -71,27 +70,22 @@
       (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
       (key-chord-mode 1)
     )
-  :ensure t)
+)
 
-(use-package magit
-  :ensure t)
+(use-package magit)
 
 (use-package base16-theme
-  :ensure t
   :config (load-theme 'base16-default-dark)
 )
 
 (use-package recentf
-  :ensure t
   :config (setq recentf-max-menu-items 25)
   :init (recentf-mode 1)
 )
 
 (use-package eshell-syntax-highlighting
   :after esh-mode
-  :demand t ;; Install if not already installed.
   :config
-  ;; Enable in all Eshell buffers.
   (eshell-syntax-highlighting-global-mode +1)
 )
 
@@ -112,12 +106,10 @@
     (global-set-key (kbd "M-x") 'helm-M-x)  ;; Improved M-x menu
     (global-set-key (kbd "C-x C-r") 'helm-recentf)
     (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
-  :ensure t
 )
 
 ;; Key Bindings
 (global-set-key (kbd "C-x C-x") 'evil-mode)
-(global-set-key (kbd "M-a")     'neotree-toggle)
 (global-set-key (kbd "C-x C-l") (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
 
 (global-set-key (kbd "C-=") 'text-scale-increase)
