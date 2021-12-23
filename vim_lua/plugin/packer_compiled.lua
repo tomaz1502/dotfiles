@@ -94,6 +94,11 @@ _G.packer_plugins = {
     path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/lightspeed.nvim",
     url = "https://github.com/ggandor/lightspeed.nvim"
   },
+  ["nvim-lspconfig"] = {
+    loaded = true,
+    path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/nvim-lspconfig",
+    url = "https://github.com/neovim/nvim-lspconfig"
+  },
   ["packer.nvim"] = {
     loaded = true,
     path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/packer.nvim",

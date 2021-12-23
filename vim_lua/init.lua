@@ -3,17 +3,44 @@
 
 -- THIS MUST COME FIRST!!!!
 vim.cmd("colorscheme base16-default-dark")
-vim.cmd("syntax on")
 
+-- Highlight Groups {{{
+local highlights = {
+    {'SL1',        { bg = '#282828', fg = '#b8b8b8', gui = 'Bold'}},
+    {'SL2',        { bg = '#282828', fg = '#b8b8b8'              }},
+    {'SL3',        { bg = 'Gray',    fg = '#282828'              }},
+    {'ArSvd',      { bg = '#282828', fg = 'Red'                  }},
+    {'ArMod',      { bg = '#282828', fg = 'Gold'                 }},
+    {'ArRgt',      { bg = '#282828', fg = 'Gray'                 }},
+    {'BgMod',      { bg = 'Gold'                                 }},
+    {'BgSvd',      { bg = 'Red'                                  }}
+}
+
+local set_hl = function(group, options)
+  local bg = options.bg == nil and '' or 'guibg=' .. options.bg
+  local fg = options.fg == nil and '' or 'guifg=' .. options.fg
+  local gui = options.gui == nil and '' or 'gui=' .. options.gui
+
+  vim.cmd(string.format('hi %s %s %s %s', group, bg, fg, gui))
+end
+
+for _, highlight in ipairs(highlights) do
+  set_hl(highlight[1], highlight[2])
+end
+--}}}
+
+-- Requires {{{
 vim.opt.runtimepath = vim.opt.runtimepath + "/home/tomazgomes/.config/nvim/lua"
-vim.opt.runtimepath = vim.opt.runtimepath + "/home/tomazgomes/.config/nvim/lua/plugins"
-require('packer')
-require('setup.zen_mode')
+require('pack')
+require('zen_mode')
 require('status_line')
+require('lsp_conf')
+-- }}}
 
 -- Options {{{
 vim.cmd("filetype plugin on")
 vim.cmd("filetype plugin indent on")
+vim.cmd("syntax on")
 
 vim.opt.number = true
 vim.opt.mouse = 'a'
@@ -32,6 +59,7 @@ vim.opt.swapfile = false
 
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
+vim.opt.textwidth = 80
 
 vim.opt.laststatus = 2
 
@@ -40,7 +68,8 @@ vim.opt.signcolumn = 'no'
 vim.opt.termguicolors = true
 
 vim.opt.foldmethod = 'marker'
-vim.opt.foldenable = false
+vim.opt.foldenable = true
+-- vim.opt_local.colorcolumn = '+' .. vim.fn.join(vim.fn.range(0, 254), ',+')
 -- TODO vim.opt.inccomand = 'nosplit'
 -- }}}
 
@@ -83,7 +112,7 @@ map("x", "(", "xi()<Esc>P", { noremap = true })
 -- }}}
 
 -- Autocmd {{{
-
 vim.cmd("autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank { higroup=\"Substitute\", timeout=200 }")
 
 --}
+

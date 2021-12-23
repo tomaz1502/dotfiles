@@ -15,6 +15,8 @@ return require('packer').startup(function()
     use 'folke/zen-mode.nvim'
     use 'neovimhaskell/haskell-vim'
     use 'monkoose/fzf-hoogle.vim'
+    use 'neovim/nvim-lspconfig'
+    use 'hrsh7th/nvim-compe'
 end)
 
 
