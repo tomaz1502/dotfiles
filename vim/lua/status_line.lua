@@ -83,7 +83,8 @@ function blur_window()
 end
 
 function focus_window()
-  vim.opt_local.colorcolumn = '+' .. vim.fn.join(vim.fn.range(0, 254), ',+')
+--  vim.opt_local.colorcolumn = '+' .. vim.fn.join(vim.fn.range(0, 254), ',+')
+  vim.opt_local.colorcolumn = ""
   if vim.bo.modified then
       vim.opt_local.statusline = Statusline('modified')
   else

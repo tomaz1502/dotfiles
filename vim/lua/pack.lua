@@ -20,6 +20,8 @@ return require('packer').startup(function()
     use 'Julian/lean.nvim'
     use 'nvim-lua/plenary.nvim'
     use 'andrewradev/switch.vim'
+    use 'xuhdev/vim-latex-live-preview'
+    use 'mateusbraga/vim-spell-pt-br'
 end)
 
 
