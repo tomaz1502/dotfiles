@@ -1,22 +1,18 @@
 local M = {}
 
 M.get_lsp_diagnostic = function(self)
-  local result = {}
-  local levels = {
-    errors = 'Error',
-    warnings = 'Warning',
-    info = 'Information',
-    hints = 'Hint'
-  }
+  local result = {errors = 0 , warnings = 0, info = 0, hints = 0}
+  local diagTypes = {'errors', 'warnings', 'info', 'hints'}
 
-  for k, level in pairs(levels) do
-    result[k] = vim.lsp.diagnostic.get_count(0, level)
+  for _, value in pairs(vim.diagnostic.get()) do
+    local tp = diagTypes[value["severity"]]
+    result[tp] = result[tp] + 1
   end
 
   return string.format(
     ":%s :%s :%s",
     result['errors'] or 0, result['warnings'] or 0,
-    result['info'] or 0
+    (result['info'] or 0) + (result['hint'] or 0)
   )
 end
 
@@ -57,12 +53,12 @@ end
 
 M.set_saved = function(self)
     local info = self:info()
-    return table.concat({"%#BgSvd#", "    ", "%#ArSvd#", "", info })
+    return table.concat({"%#BgSvd#", "     ", "%#ArSvd#", "", info })
 end
 
 M.set_modified = function(self)
     local info = self:info()
-    return table.concat({"%#BgMod#", "    ", "%#ArMod#", "", info })
+    return table.concat({"%#BgMod#", "     ", "%#ArMod#", "", info })
 end
 
 M.set_inactive = function(self)
@@ -83,7 +79,7 @@ function blur_window()
 end
 
 function focus_window()
---  vim.opt_local.colorcolumn = '+' .. vim.fn.join(vim.fn.range(0, 254), ',+')
+  -- vim.opt_local.colorcolumn = '+' .. vim.fn.join(vim.fn.range(0, 254), ',+')
   vim.opt_local.colorcolumn = ""
   if vim.bo.modified then
       vim.opt_local.statusline = Statusline('modified')
