@@ -105,6 +105,7 @@ map("n", "<Leader>t", ":Files<CR>", { silent = true, noremap = true })
 map("n", "<Leader>b", ":Buffers<CR>", { silent = true, noremap = true })
 map("n", "<Leader>w", ":w<CR>", { silent = true, noremap = true })
 map("n", "<Leader>q", ":q<CR>", { silent = true, noremap = true })
+map("n", "d", "\"_d", { noremap = true })
 
 map("x", "(", "xi()<Esc>P", { noremap = true })
 
