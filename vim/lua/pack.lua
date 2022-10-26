@@ -4,13 +4,14 @@ vim.cmd [[packadd packer.nvim]]
 
 return require('packer').startup(function()
     use 'wbthomason/packer.nvim'
-    use 'junegunn/fzf.vim'
-    use { 'junegunn/fzf',
-          run = function() vim.fn('fzf#install()') end
-        }
+    use 'nvim-telescope/telescope.nvim'
+    -- use 'junegunn/fzf.vim'
+    -- use { 'junegunn/fzf',
+    --       run = function() vim.fn('fzf#install()') end
+    --     }
     use 'justinmk/vim-dirvish'
     use 'tpope/vim-commentary'
-    use 'jremmen/vim-ripgrep'
+    -- use 'jremmen/vim-ripgrep'
     use 'ggandor/lightspeed.nvim'
     use 'folke/zen-mode.nvim'
     use 'neovimhaskell/haskell-vim'
@@ -22,6 +23,9 @@ return require('packer').startup(function()
     use 'andrewradev/switch.vim'
     use 'xuhdev/vim-latex-live-preview'
     use 'mateusbraga/vim-spell-pt-br'
+    use 'jpalardy/vim-slime'
+    use 'junegunn/vim-easy-align'
+    use 'bohlender/vim-smt2'
 end)
 
 
