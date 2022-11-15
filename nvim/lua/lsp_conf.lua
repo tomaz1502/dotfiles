@@ -44,6 +44,7 @@ vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
 
 local on_attach = require('on_attach')
 
+require'lspconfig'.gopls.setup{ on_attach = on_attach }
 require'lspconfig'.clangd.setup{ on_attach = on_attach,
                                  init_options = { fallbackFlags = { "-std=c++2a" } }
                                }

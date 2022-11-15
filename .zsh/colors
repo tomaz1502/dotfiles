@@ -129,11 +129,11 @@ color() {
 function () {
   emulate -L zsh
 
-  if [[ -s "$__WINCENT[BASE16_CONFIG]" ]]; then
-    local SCHEME=$(head -1 "$__WINCENT[BASE16_CONFIG]")
-    local BACKGROUND=$(sed -n -e '2 p' "$__WINCENT[BASE16_CONFIG]")
+  if [[ -s "$__TABLE[BASE16_CONFIG]" ]]; then
+    local SCHEME=$(head -1 "$__TABLE[BASE16_CONFIG]")
+    local BACKGROUND=$(sed -n -e '2 p' "$__TABLE[BASE16_CONFIG]")
     if [ "$BACKGROUND" != 'dark' -a "$BACKGROUND" != 'light' ]; then
-      echo "warning: unknown background type in $__WINCENT[BASE16_CONFIG]"
+      echo "warning: unknown background type in $__TABLE[BASE16_CONFIG]"
     fi
     color "$SCHEME"
   else

@@ -9,23 +9,26 @@ vim.api.nvim_command('packadd packer.nvim')
 
 local no_errors, error_msg = pcall(function()
 
-  local time
-  local profile_info
-  local should_profile = false
-  if should_profile then
-    local hrtime = vim.loop.hrtime
-    profile_info = {}
-    time = function(chunk, start)
-      if start then
-        profile_info[chunk] = hrtime()
-      else
-        profile_info[chunk] = (hrtime() - profile_info[chunk]) / 1e6
-      end
+_G._packer = _G._packer or {}
+_G._packer.inside_compile = true
+
+local time
+local profile_info
+local should_profile = false
+if should_profile then
+  local hrtime = vim.loop.hrtime
+  profile_info = {}
+  time = function(chunk, start)
+    if start then
+      profile_info[chunk] = hrtime()
+    else
+      profile_info[chunk] = (hrtime() - profile_info[chunk]) / 1e6
     end
-  else
-    time = function(chunk, start) end
   end
-  
+else
+  time = function(chunk, start) end
+end
+
 local function save_profiles(threshold)
   local sorted_times = {}
   for chunk_name, time_taken in pairs(profile_info) do
@@ -38,8 +41,10 @@ local function save_profiles(threshold)
       results[i] = elem[1] .. ' took ' .. elem[2] .. 'ms'
     end
   end
+  if threshold then
+    table.insert(results, '(Only showing plugins that took longer than ' .. threshold .. ' ms ' .. 'to load)')
+  end
 
-  _G._packer = _G._packer or {}
   _G._packer.profile_output = results
 end
 
@@ -69,30 +74,30 @@ end
 time([[try_loadstring definition]], false)
 time([[Defining packer_plugins]], true)
 _G.packer_plugins = {
-  fzf = {
-    loaded = true,
-    path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/fzf",
-    url = "https://github.com/junegunn/fzf"
-  },
   ["fzf-hoogle.vim"] = {
     loaded = true,
     path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/fzf-hoogle.vim",
     url = "https://github.com/monkoose/fzf-hoogle.vim"
-  },
-  ["fzf.vim"] = {
-    loaded = true,
-    path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/fzf.vim",
-    url = "https://github.com/junegunn/fzf.vim"
   },
   ["haskell-vim"] = {
     loaded = true,
     path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/haskell-vim",
     url = "https://github.com/neovimhaskell/haskell-vim"
   },
+  ["lean.nvim"] = {
+    loaded = true,
+    path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/lean.nvim",
+    url = "https://github.com/Julian/lean.nvim"
+  },
   ["lightspeed.nvim"] = {
     loaded = true,
     path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/lightspeed.nvim",
     url = "https://github.com/ggandor/lightspeed.nvim"
+  },
+  nvim = {
+    loaded = true,
+    path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/nvim",
+    url = "https://github.com/catppuccin/nvim"
   },
   ["nvim-compe"] = {
     loaded = true,
@@ -109,6 +114,26 @@ _G.packer_plugins = {
     path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/packer.nvim",
     url = "https://github.com/wbthomason/packer.nvim"
   },
+  ["plenary.nvim"] = {
+    loaded = true,
+    path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/plenary.nvim",
+    url = "https://github.com/nvim-lua/plenary.nvim"
+  },
+  ["switch.vim"] = {
+    loaded = true,
+    path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/switch.vim",
+    url = "https://github.com/andrewradev/switch.vim"
+  },
+  ["telescope-hoogle.nvim"] = {
+    loaded = true,
+    path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/telescope-hoogle.nvim",
+    url = "https://github.com/psiska/telescope-hoogle.nvim"
+  },
+  ["telescope.nvim"] = {
+    loaded = true,
+    path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/telescope.nvim",
+    url = "https://github.com/nvim-telescope/telescope.nvim"
+  },
   ["vim-commentary"] = {
     loaded = true,
     path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/vim-commentary",
@@ -119,10 +144,30 @@ _G.packer_plugins = {
     path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/vim-dirvish",
     url = "https://github.com/justinmk/vim-dirvish"
   },
-  ["vim-ripgrep"] = {
+  ["vim-easy-align"] = {
     loaded = true,
-    path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/vim-ripgrep",
-    url = "https://github.com/jremmen/vim-ripgrep"
+    path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/vim-easy-align",
+    url = "https://github.com/junegunn/vim-easy-align"
+  },
+  ["vim-latex-live-preview"] = {
+    loaded = true,
+    path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/vim-latex-live-preview",
+    url = "https://github.com/xuhdev/vim-latex-live-preview"
+  },
+  ["vim-slime"] = {
+    loaded = true,
+    path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/vim-slime",
+    url = "https://github.com/jpalardy/vim-slime"
+  },
+  ["vim-smt2"] = {
+    loaded = true,
+    path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/vim-smt2",
+    url = "https://github.com/bohlender/vim-smt2"
+  },
+  ["vim-spell-pt-br"] = {
+    loaded = true,
+    path = "/home/tomazgomes/.local/share/nvim/site/pack/packer/start/vim-spell-pt-br",
+    url = "https://github.com/mateusbraga/vim-spell-pt-br"
   },
   ["zen-mode.nvim"] = {
     loaded = true,
@@ -132,10 +177,18 @@ _G.packer_plugins = {
 }
 
 time([[Defining packer_plugins]], false)
+
+_G._packer.inside_compile = false
+if _G._packer.needs_bufread == true then
+  vim.cmd("doautocmd BufRead")
+end
+_G._packer.needs_bufread = false
+
 if should_profile then save_profiles() end
 
 end)
 
 if not no_errors then
+  error_msg = error_msg:gsub('"', '\\"')
   vim.api.nvim_command('echohl ErrorMsg | echom "Error in packer_compiled: '..error_msg..'" | echom "Please check your config for correctness" | echohl None')
 end

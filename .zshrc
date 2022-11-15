@@ -87,12 +87,12 @@ function +vi-git-untracked() {
   fi
 }
 
-RPROMPT_BASE="\${vcs_info_msg_0_}%F{blue}%~%f"
+RPROMPT_BASE="\${vcs_info_msg_0_}%F{blue}%(4~|.../%3~|%~)%f"
 setopt PROMPT_SUBST
 
 # Anonymous function to avoid leaking variables.
 function () {
-  local SUFFIX=$(printf '%%F{red}$%%f')
+  local SUFFIX=$(printf '%%F{red}λ%%f')
   # export PS1="%B${SUFFIX}%b%F{yellow}%B%(1j.*.)%(?..!)%b%f "
   # export PS1="%F{green}${SSH_TTY:+%n@%m}%f${SSH_TTY:+:}%B%F{#2222DD}%1~%F{yellow}%(1j.*.)%(?..!)%f${SUFFIX}%b "
   export PS1="%F{green}${SSH_TTY:+%n@%m}%f${SSH_TTY:+:}%F{blue}%1~%F{yellow}%(1j.*.)%(?..!)%f${SUFFIX} "
@@ -126,7 +126,7 @@ setopt PUSHD_SILENT            # [default] don't print dir stack after pushing/p
 #
 # Bindings
 #
-bindkey -v # vi bindings, set -e to emacs bindings
+bindkey -e # vi bindings, set -e to emacs bindings
 bindkey 'jk' vi-cmd-mode
 
 # Use "cbt" capability ("back_tab", as per `man terminfo`), if we have it:
@@ -165,7 +165,7 @@ function fg-bg() {
 zle -N fg-bg
 bindkey '^Z' fg-bg
 
-source $HOME/.zsh/colors
+# source $HOME/.zsh/colors
 
 # Skim
 
@@ -205,11 +205,18 @@ function -report-start-time() {
       SECS="$((~~$SECS))s"
     fi
     ELAPSED="${ELAPSED}${SECS}"
-    # export RPROMPT="$RPROMPT_BASE %F{cyan}| %{$__TABLE[ITALIC_ON]%}${ELAPSED}%{$__TABLE[ITALIC_OFF]%}%f"
-    export RPROMPT="%F{cyan}%{$__TABLE[ITALIC_ON]%}${ELAPSED}%{$__TABLE[ITALIC_OFF]%}%f $RPROMPT_BASE"
+    if [[ -n "$TMUX" ]]; then
+        export RPROMPT="%F{cyan}%{$__TABLE[ITALIC_ON]%}${ELAPSED}%{$__TABLE[ITALIC_OFF]%}%f $RPROMPT_BASE %F{yellow}[T]%f"
+    else
+        export RPROMPT="%F{cyan}%{$__TABLE[ITALIC_ON]%}${ELAPSED}%{$__TABLE[ITALIC_OFF]%}%f $RPROMPT_BASE "
+    fi
     unset ZSH_START_TIME
   else
-    export RPROMPT="$RPROMPT_BASE"
+    if [[ -n "$TMUX" ]]; then
+        export RPROMPT="$RPROMPT_BASE %F{yellow}[T]%f"
+    else
+        export RPROMPT="$RPROMPT_BASE"
+    fi
   fi
 }
 add-zsh-hook precmd -report-start-time
@@ -283,24 +290,21 @@ alias :q=exit
 alias :sp='test -n "$TMUX" && tmux split-window'
 alias :vs='test -n "$TMUX" && tmux split-window -h'
 
+alias mutt="neomutt"
 alias vim="nvim" # meh
-alias vi="vi -u NONE" # without vimrc
+alias vi="nvim -u ~/.minimal_vimrc" # without vimrc
 alias ls="ls --color=always"
+alias ll="ls -l"
+alias fd="fdfind"
+alias cdz="source /home/tomazgomes/Tools/Script/cd_fzf.sh"
 
-alias vrc="vim ~/Desktop/Tom/dotfiles/.vimrc"
+alias vrc="vim ~/.config/nvim/init.lua"
 alias zrc="vim ~/.zshrc"
-alias irc="vim ~/.config/i3/config"
-alias rrc="vim ~/.config/ranger/rc.conf"
 alias gco="git checkout"
-alias ima="cd ~/Desktop/Tom/Imagine/imagine-compiler"
 
-alias grd="cd ~/Desktop/Tom/Grad/"
-
-alias smi="sudo make install"
+alias fed="cd /home/tomazgomes/Desktop/Rust/FunctionalEditor"
 
 alias noop=":"
-
-alias hs_tmp="cp ~/Desktop/Tom/Haskell/cf_template.hs ."
 
 # unset PATH
 PATH=$PATH:/bin
@@ -316,14 +320,43 @@ PATH=$PATH:/home/tomazgomes/.cabal/bin/
 #PATH=$PATH:/snap/bin/
 PATH=$PATH:/usr/local/
 PATH=$PATH:/home/tomazgomes/.local/bin
-PATH=$PATH:/home/tomazgomes/.elan/bin/   
+# PATH=$PATH:/home/tomazgomes/.elan/bin/
+PATH=$PATH:/home/tomazgomes/.elan/lean4/bin/
+PATH=$PATH:/home/tomazgomes/.cabal/bin
+PATH=$PATH:/home/tomazgomes/.ghcup/bin
+PATH=$PATH:/home/tomazgomes/
+PATH=$PATH:/home/tomazgomes/Tools/nvim-linux64/bin/
 export PATH    
 
 export EDITOR="nvim"
 export BROWSER="firefox"
 
+echo -e -n "\e[4 q"
 # blinking bar cursor
-echo -e -n "\x1b[\x35 q"
+# echo -e -n "\x1b[\x35 q"
 
-alias run="rm -rf * .* && cp ~/Desktop/Tom/Imagine/generated-node-rest/node-demo-rest.im . && imagine compile node-demo-rest.im --server=https://localhost:3000 && yarn install && yarn coverage"
+fzf_history_search() {
+  setopt extendedglob
+  candidates=(${(f)"$(fc -li -1 0 | fzf +s +m -x -e -q "$BUFFER")"})
+  local ret=$?
+  if [ -n "$candidates" ]; then
+    BUFFER="${candidates[@]/(#m)*/${${(As: :)MATCH}[4,-1]}}"
+    BUFFER="${BUFFER[@]/(#b)(?)\\n/$match[1]
+}"
+    zle vi-fetch-history -n $BUFFER
+  fi
+  zle reset-prompt
+  return $ret
+}
 
+autoload fzf_history_search
+zle -N fzf_history_search
+
+bindkey '^r' fzf_history_search
+
+SUDO_EDITOR=/home/tomazgomes/Tools/nvim-linux64/bin//nvim
+export SUDO_EDITOR
+
+
+export PATH=$PATH:/home/tomazgomes/go/bin
+source /home/tomazgomes/.zsh/zsh-abbr/zsh-abbr.zsh

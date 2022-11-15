@@ -16,4 +16,6 @@ return function(client, bufnr)
   buf_set_keymap('n', '[d',         '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>',   opts)
   buf_set_keymap('n', ']d',         '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>',   opts)
   buf_set_keymap('n', '<leader>d',  '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap('n', '<leader>F',  '<cmd>lua vim.lsp.buf.format()<CR>', opts)
+  buf_set_keymap('n', '<leader>D',  '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
 end

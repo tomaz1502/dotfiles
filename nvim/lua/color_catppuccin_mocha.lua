@@ -1,3 +1,38 @@
+vim.cmd("colorscheme catppuccin-mocha")
+vim.opt.laststatus = 2
+
+local surface0 = '#313244'
+local surface1 = '#45475a'
+local surface2 = '#585b70'
+
+local mauve = '#cba6f7'
+local lavender = '#b4befe'
+local green = '#a6e3a1'
+local teal  = '#94e2d5'
+
+local highlights = {
+    {'SL1',        { bg = surface0,  fg = '#cdd6f4', gui = 'Bold' }},
+    {'SL2',        { bg = surface0,  fg = '#cdd6f4'               }},
+    {'SL3',        { bg = '#cdd6f4', fg = surface0                }},
+    {'ArSvd',      { bg = surface0,  fg = lavender                }},
+    {'ArMod',      { bg = surface0,  fg = teal                    }},
+    {'ArRgt',      { bg = surface0,  fg = '#cdd6f4'               }},
+    {'BgMod',      { bg = teal                                    }},
+    {'BgSvd',      { bg = lavender                                }}
+}
+
+local set_hl = function(group, options)
+  local bg = options.bg == nil and '' or 'guibg=' .. options.bg
+  local fg = options.fg == nil and '' or 'guifg=' .. options.fg
+  local gui = options.gui == nil and '' or 'gui=' .. options.gui
+
+  vim.cmd(string.format('hi %s %s %s %s', group, bg, fg, gui))
+end
+
+for _, highlight in ipairs(highlights) do
+  set_hl(highlight[1], highlight[2])
+end
+
 local M = {}
 
 M.get_lsp_diagnostic = function(self)
@@ -74,8 +109,8 @@ Statusline = setmetatable(M, {
 })
 
 function blur_window()
-  vim.opt_local.colorcolumn = vim.fn.join(vim.fn.range(1, 254), ',')
-  vim.opt_local.statusline = Statusline('inactive')
+  -- vim.opt_local.colorcolumn = vim.fn.join(vim.fn.range(1, 254), ',')
+  -- vim.opt_local.statusline = Statusline('inactive')
 end
 
 function focus_window()
