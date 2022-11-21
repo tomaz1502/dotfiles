@@ -1,0 +1,79 @@
+#+title: Config
+#+author: Tom
+
+* Personal
+#+BEGIN_SRC emacs-lisp
+    (setq user-full-name "Tomaz Gomes Mascarenhas"
+          user-mail-address "tomgm1502@gmail.com")
+#+END_SRC
+
+* Visual
+#+BEGIN_SRC emacs-lisp
+  (set-face-attribute 'default nil :height 180)
+  (set-frame-font "Fira Mono" nil t)
+  (setq vertico-count 10)
+  (setq doom-theme 'doom-dracula)
+#+END_SRC
+
+* Maps
+#+BEGIN_SRC emacs-lisp
+(map! "M-l" #'windmove-right
+      "M-h" #'windmove-left
+      "M-j" #'windmove-down
+      "M-k" #'windmove-up
+      "M-L" #'enlarge-window-horizontally
+      "M-H" #'shrink-window-horizontally
+      "M-K" #'enlarge-window
+      "M-J" #'shrink-window
+      "C-x C-x" #'evil-mode
+)
+(map! :leader
+      "f P" #'(lambda () (interactive) (find-file "~/.doom.d/setup.org"))
+)
+
+(define-key evil-normal-state-map (kbd "-")
+  (lambda () (interactive)
+    (find-file default-directory)
+  )
+)
+#+END_SRC
+
+* Agda
+#+BEGIN_SRC emacs-lisp
+  (load-file (let ((coding-system-for-read 'utf-8)) "/home/tomazgomes/.agda/Agda-2.6.2.2/.stack-work/install/x86_64-linux/1dc13895165378084551b1998bd0b2482e2120661cdf49a83a324a4c3962f1c6/9.0.2/share/x86_64-linux-ghc-9.0.2/Agda-2.6.2.2/emacs-mode/agda2.el"))
+#+END_SRC
+
+* PDF
+#+BEGIN_SRC emacs-lisp
+  (add-hook! pdf-view-mode
+    (lambda ()
+        (local-set-key (kbd "j")  'pdf-view-next-line-or-next-page)
+        (local-set-key (kbd "k")  'pdf-view-previous-line-or-previous-page)
+        (local-set-key (kbd "gg") 'pdf-view-first-page)
+        (local-set-key (kbd "G")  'pdf-view-last-page)
+        (local-set-key (kbd "{")  'pdf-view-previous-page-command)
+        (local-set-key (kbd "}")  'pdf-view-next-page-command)
+      )
+    )
+#+END_SRC
+
+* Latex
+#+BEGIN_SRC emacs-lisp
+(add-hook! LaTeX-mode
+  (setq compile-command
+    (format "pdflatex %s"
+      (file-name-nondirectory (kill-new buffer-file-name))))
+  (display-line-numbers-mode 0)
+)
+#+END_SRC
+
+* Org
+#+BEGIN_SRC emacs-lisp
+  (add-hook! org-mode
+    (display-line-numbers-mode 0)   )
+#+END_SRC
+
+* Other
+#+BEGIN_SRC emacs-lisp
+    (setq doom-scratch-initial-major-mode 'org-mode)
+#+END_SRC
