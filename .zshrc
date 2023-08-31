@@ -369,5 +369,3 @@ export SUDO_EDITOR
 
 export PKG_CONFIG_PATH=/lib/x86_64-linux-gnu/pkgconfig/
 
-export OPENAI_API_KEY=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
-
