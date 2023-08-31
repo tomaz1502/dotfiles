@@ -39,8 +39,8 @@ zstyle ':completion:*' menu select
 # Prompt
 #
 
-autoload -U colors
-colors
+source /home/tomazgomes/.zsh/base16-shell/profile_helper.sh
+base16_default-dark
 
 # http://zsh.sourceforge.net/Doc/Release/User-Contributions.html
 autoload -Uz vcs_info
@@ -165,7 +165,7 @@ function fg-bg() {
 zle -N fg-bg
 bindkey '^Z' fg-bg
 
-# source $HOME/.zsh/colors
+
 
 # Skim
 
@@ -283,6 +283,10 @@ setopt    appendhistory     # Append history to the history file (no overwriting
 setopt    sharehistory      # Share history across terminals
 setopt    incappendhistory  # Immediately append to the history file, not just when a term is killed
 
+function get_lean() {
+    cvc5 --dump-proofs --proof-granularity=theory-rewrite --incremental --dag-thresh=0 --proof-format=lean --enum-inst $1
+}
+
 stty -ixon
 
 alias :e=vim
@@ -320,12 +324,12 @@ PATH=$PATH:/home/tomazgomes/.cabal/bin/
 #PATH=$PATH:/snap/bin/
 PATH=$PATH:/usr/local/
 PATH=$PATH:/home/tomazgomes/.local/bin
-# PATH=$PATH:/home/tomazgomes/.elan/bin/
 PATH=$PATH:/home/tomazgomes/.elan/lean4/bin/
 PATH=$PATH:/home/tomazgomes/.cabal/bin
 PATH=$PATH:/home/tomazgomes/.ghcup/bin
 PATH=$PATH:/home/tomazgomes/
 PATH=$PATH:/home/tomazgomes/Tools/nvim-linux64/bin/
+PATH=$PATH:/home/tomazgomes/.elan/bin
 export PATH    
 
 export EDITOR="nvim"
@@ -358,5 +362,12 @@ SUDO_EDITOR=/home/tomazgomes/Tools/nvim-linux64/bin//nvim
 export SUDO_EDITOR
 
 
-export PATH=$PATH:/home/tomazgomes/go/bin
-source /home/tomazgomes/.zsh/zsh-abbr/zsh-abbr.zsh
+# export PATH=$PATH:/home/tomazgomes/go/bin
+# source /home/tomazgomes/.zsh/zsh-abbr/zsh-abbr.zsh
+
+[ -f "/home/tomazgomes/.ghcup/env" ] && source "/home/tomazgomes/.ghcup/env" # ghcup-env
+
+export PKG_CONFIG_PATH=/lib/x86_64-linux-gnu/pkgconfig/
+
+export OPENAI_API_KEY=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
+
