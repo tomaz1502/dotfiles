@@ -64,26 +64,26 @@ require'lspconfig'.ocamllsp.setup{ on_attach = on_attach
 --                                , single_file_support = true
 --                                }
 
-local sumneko_root_path = "/home/tomazgomes/Tools/lua-language-server"
-local sumneko_binary = "/home/tomazgomes/Tools/lua-language-server/bin/Linux/lua-language-server"
-
-require'lspconfig'.sumneko_lua.setup {
-    cmd = {sumneko_binary, "-E", sumneko_root_path .. "/main.lua"},
-    settings = {
-        Lua = {
-            runtime = {
-                version = 'LuaJIT',
-                path = vim.split(package.path, ';')
-            },
-            diagnostics = {
-                globals = {'vim', 'use'}
-            },
-            workspace = {
-                library = {[vim.fn.expand('$VIMRUNTIME/lua')] = true, [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true}
-            }
-        }
-    }
-}
+-- local sumneko_root_path = "/home/tomazgomes/Tools/lua-language-server"
+-- local sumneko_binary = "/home/tomazgomes/Tools/lua-language-server/bin/Linux/lua-language-server"
+-- 
+-- require'lspconfig'.sumneko_lua.setup {
+--     cmd = {sumneko_binary, "-E", sumneko_root_path .. "/main.lua"},
+--     settings = {
+--         Lua = {
+--             runtime = {
+--                 version = 'LuaJIT',
+--                 path = vim.split(package.path, ';')
+--             },
+--             diagnostics = {
+--                 globals = {'vim', 'use'}
+--             },
+--             workspace = {
+--                 library = {[vim.fn.expand('$VIMRUNTIME/lua')] = true, [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true}
+--             }
+--         }
+--     }
+-- }
 
 require('lean').setup({
     lsp = { on_attach = on_attach },

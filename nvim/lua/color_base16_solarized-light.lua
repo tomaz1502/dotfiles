@@ -1,26 +1,17 @@
-vim.cmd("colorscheme gruvbox")
 vim.opt.laststatus = 2
-vim.cmd(":set background=light")
+vim.cmd("colorscheme base16-solarized-light")
 
-local orange  = '#d65d0e'
-local blue1   = '#458588'
-local blue2   = '#83a598'
-local aqua1   = '#689d6a'
-local yellow1 = '#d79921'
-local yellow2 = '#fabd2f'
-local gray2   = '#928374'
-local purple1 = '#b16286'
-local purple2 = '#8f3f71'
+local yellow1 = 'b5/89/00'
+local purple1 = 'Purple'
+-- local yellow1 = '#d79921'
+-- local purple1 = '#b16286'
 
 local bg1     = '#ebdbb2'
-local bg2     = '#d5c4a1'
 
-local fg = '#3c3836'
 local fg2 = '#504945'
-local fg4 = '#7c6f64'
 
 local highlights = {
-    {'SL1',        { bg = bg1,     fg = fg2, gui = 'Bold' }},
+    {'SL1',        { bg = '#ebdbb2', fg = '#504945', gui = 'Bold' }},
     {'SL2',        { bg = bg1,     fg = fg2               }},
     {'SL3',        { bg = yellow1, fg = fg2               }},
     {'ArSvd',      { bg = bg1,     fg = yellow1           }},

@@ -1,21 +1,26 @@
 -- init.lua (Author: Tomaz Gomes Mascarenhas)
 -- GitHub : https://github.com/tomaz1502/dotfiles/blob/master/.vimrc
 
--- THIS MUST COME FIRST!!!!
--- vim.cmd("colorscheme base16-gruvbox-light-medium")
--- vim.opt.laststatus = 0
--- vim.cmd("hi Normal guibg=NONE")
-vim.opt.number = true
-vim.opt.relativenumber = false
-vim.opt.cursorline = true
+vim.opt.laststatus = 0
+vim.cmd("hi Normal guibg=NONE")
 
 -- Requires {{{
 vim.opt.runtimepath = vim.opt.runtimepath + "/home/tomazgomes/.config/nvim/lua"
-require('pack')
+require('lazy_mod')
 require('zen_mode')
-require('color_catppuccin_mocha')
----require('color_base16_default_dark')
 require('lsp_conf')
+if os.getenv("BASE16_THEME") then
+    local theme = os.getenv("BASE16_THEME")
+    if theme == "default-dark" then
+        require("color_base16_default-dark")
+    elseif theme == "solarized-light" then
+        require("color_base16_solarized-light")
+    else
+        require("color_base16_solarized-light")
+    end
+else
+    require("color_base16_default-dark")
+end
 -- }}}
 
 -- Options {{{
@@ -25,6 +30,10 @@ vim.cmd("syntax on")
 
 vim.opt.numberwidth = 5
 vim.opt.mouse = 'a'
+
+vim.opt.number = true
+vim.opt.relativenumber = false
+vim.opt.cursorline = true
 
 vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
@@ -82,10 +91,12 @@ map("n", " ", ":nohlsearch<Bar>:echo<CR>", { silent = true, noremap = true })
 map("n", "<Leader>t", ":Telescope find_files<CR>", { silent = true, noremap = true })
 map("n", "<Leader>b", ":Telescope buffers<CR>", { silent = true, noremap = true })
 map("n", "<Leader>h", ":Telescope oldfiles<CR>", { silent = true, noremap = true })
-map("n", "<Leader>r", ":Telescope live_grep<CR>", { silent = true, noremap = true })
+map("n", "<Leader>R", ":Telescope live_grep<CR>", { silent = true, noremap = true })
 map("n", "<Leader>z", ":ZenMode<CR>", { silent = true, noremap = true })
 map("n", "<Leader>w", ":w<CR>", { silent = true, noremap = true })
 map("n", "<Leader>q", ":q<CR>", { silent = true, noremap = true })
+
+map("n", "<Leader>C", ":!pdflatex -shell-escape main<CR>", { silent = true, noremap = true })
 
 map("x", "(", "xi()<Esc>P", { noremap = true })
 map("x", "[", "xi[]<Esc>P", { noremap = true })
@@ -99,19 +110,8 @@ vim.g.maplocalleader = "m"
 -- TODO vim.api.nvim_set_keymap("c", "<C-p>", "<C-r>\"", { noremap = true })
 -- }}}
 
--- Autocmd {{{
 vim.cmd("autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank { higroup=\"Substitute\", timeout=200 }")
---}}}
-
--- vim.cmd("set spell")
--- vim.cmd("set spelllang=pt_br")
-
-vim.cmd("let g:slime_target = \"tmux\"")
-
-inspect = require("inspect")
 
 vim.cmd("autocmd FileType sml setlocal commentstring=(*%s*)")
 
 vim.cmd("set guicursor=n-v-c-i:block")
-
-vim.cmd("let g:livepreview_previewer = 'zathura'")
