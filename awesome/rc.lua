@@ -215,7 +215,7 @@ awful.screen.connect_for_each_screen(function(s)
     }
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s })
+    s.mywibox = awful.wibar({ position = "bottom", screen = s, visible = false })
 
     -- Add widgets to the wibox
     s.mywibox:setup {
@@ -355,7 +355,8 @@ globalkeys = gears.table.join(
               {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"})
+              {description = "show the menubar", group = "launcher"}),
+    awful.key( { modkey, "Shift" }, "l", function() for s in screen do s.mywibox.visible = not s.mywibox.visible end  end, { description = "toggle wibar" } )
 )
 
 clientkeys = gears.table.join(
@@ -595,6 +596,6 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 awful.util.spawn("setxkbmap -layout us,br")
 awful.util.spawn("setxkbmap -option 'grp:alt_shift_toggle'")
 
-awful.spawn.with_shell("feh --bg-fill ~/Pictures/Wallpapers/redMountain.jpg")
+awful.spawn.with_shell("feh --bg-fill ~/Pictures/minimal.png")
 
 beautiful.useless_gap = 3
