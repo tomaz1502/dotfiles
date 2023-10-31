@@ -434,8 +434,6 @@ export SUDO_EDITOR
 
 export PKG_CONFIG_PATH=/lib/x86_64-linux-gnu/pkgconfig/
 
-export OPENAI_API_KEY=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
-
 function get_lean () {
     cvc5 $1 --lang=smt --dag-thresh=0 --dump-proofs --proof-granularity=theory-rewrite --proof-format=lean --enum-inst
 }
