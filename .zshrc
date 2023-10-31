@@ -1,5 +1,8 @@
-# Create a hash table for globally stashing variables without polluting main
-# scope with a bunch of identifiers.
+# zmodload zsh/zprof
+
+
+## Create a hash table for globally stashing variables without polluting main
+## scope with a bunch of identifiers.
 typeset -A __TABLE
 
 __TABLE[ITALIC_ON]=$'\e[3m'
@@ -14,7 +17,7 @@ fpath=($HOME/.zsh/completions $fpath)
 autoload -U compinit
 compinit -u
 
-# Make completion:
+## Make completion:
 
 # Colorize completions using default `ls` colors.
 zstyle ':completion:*' list-colors ''
@@ -41,6 +44,7 @@ zstyle ':completion:*' menu select
 
 source /home/tomazgomes/.zsh/base16-shell/profile_helper.sh
 base16_default-dark
+# base16_solarized-light
 
 # http://zsh.sourceforge.net/Doc/Release/User-Contributions.html
 autoload -Uz vcs_info
@@ -88,6 +92,7 @@ function +vi-git-untracked() {
 }
 
 RPROMPT_BASE="\${vcs_info_msg_0_}%F{blue}%(4~|.../%3~|%~)%f"
+# RPROMPT_BASE="\${vcs_info_msg_0_}%(4~|.../%3~|%~)"
 setopt PROMPT_SUBST
 
 # Anonymous function to avoid leaking variables.
@@ -96,6 +101,7 @@ function () {
   # export PS1="%B${SUFFIX}%b%F{yellow}%B%(1j.*.)%(?..!)%b%f "
   # export PS1="%F{green}${SSH_TTY:+%n@%m}%f${SSH_TTY:+:}%B%F{#2222DD}%1~%F{yellow}%(1j.*.)%(?..!)%f${SUFFIX}%b "
   export PS1="%F{green}${SSH_TTY:+%n@%m}%f${SSH_TTY:+:}%F{blue}%1~%F{yellow}%(1j.*.)%(?..!)%f${SUFFIX} "
+  # export PS1="%F{green}${SSH_TTY:+%n@%m}%f${SSH_TTY:+:}%F{blue}%1~%F{yellow}%(1j.*.)%(?..!)%f${SUFFIX} "
   if [[ -n "$TMUXING" ]]; then
     # Outside tmux, ZLE_RPROMPT_INDENT ends up eating the space after PS1, and
     # prompt still gets corrupted even if we add an extra space to compensate.
@@ -123,9 +129,8 @@ setopt PRINT_EXIT_VALUE        # [default] for non-zero exit status
 setopt PUSHD_IGNORE_DUPS       # don't push multiple copies of same dir onto stack
 setopt PUSHD_SILENT            # [default] don't print dir stack after pushing/popping
 
-#
 # Bindings
-#
+
 bindkey -e # vi bindings, set -e to emacs bindings
 bindkey 'jk' vi-cmd-mode
 
@@ -164,8 +169,6 @@ function fg-bg() {
 }
 zle -N fg-bg
 bindkey '^Z' fg-bg
-
-
 
 # Skim
 
@@ -283,9 +286,6 @@ setopt    appendhistory     # Append history to the history file (no overwriting
 setopt    sharehistory      # Share history across terminals
 setopt    incappendhistory  # Immediately append to the history file, not just when a term is killed
 
-function get_lean() {
-    cvc5 --dump-proofs --proof-granularity=theory-rewrite --incremental --dag-thresh=0 --proof-format=lean --enum-inst $1
-}
 
 stty -ixon
 
@@ -309,6 +309,8 @@ alias gco="git checkout"
 alias fed="cd /home/tomazgomes/Desktop/Rust/FunctionalEditor"
 
 alias noop=":"
+
+alias vau="cd /home/tomazgomes/Vault/Vault"
 
 # unset PATH
 PATH=$PATH:/bin
@@ -335,7 +337,7 @@ export PATH
 export EDITOR="nvim"
 export BROWSER="firefox"
 
-echo -e -n "\e[4 q"
+# echo -e -n "\e[4 q"
 # blinking bar cursor
 # echo -e -n "\x1b[\x35 q"
 
@@ -358,6 +360,69 @@ zle -N fzf_history_search
 
 bindkey '^r' fzf_history_search
 
+fzf_project() {
+    project=$(echo "prism\nlean-smt\neditor\nlam\nhighlight-lean" | fzf-tmux)
+    case $project in
+        prism)
+            cd ~/Desktop/Projects/prism/
+        ;;
+        lean-smt)
+            cd ~/Desktop/Projects/lean-smt/
+        ;;
+        editor)
+            cd ~/Desktop/Projects/editor/
+        ;;
+        lam)
+            cd ~/Desktop/Projects/lam/
+        ;;
+        highlight-lean)
+            cd ~/Vault/Vault/.obsidian/plugins/obsidian-sample-plugin
+        ;;
+    esac
+    zle reset-prompt
+}
+
+autoload fzf_project
+zle -N fzf_project
+
+bindkey '^p' fzf_project
+
+fzf_switch_session() {
+    session_names=()
+
+    sessions=$(tmux ls)
+    tmp=$IFS
+    IFS=$'\n'
+    for session in $sessions; do
+        session_name=$(echo -n $session | cut -d: -f1)
+        session_names+=($session_name)
+    done
+    IFS=$tmp
+
+    chosen_session=$(echo $session_names | fzf-tmux)
+
+    tmux switch -t $chosen_session
+}
+
+autoload fzf_switch_session
+zle -N fzf_switch_session
+
+bindkey '^t' fzf_switch_session
+
+fzf_find_dir() {
+    dirs=$(find . -type d)
+    chosen_dir=$(echo $dirs | fzf-tmux)
+    if [ -n "$chosen_dir" ]; then
+        cd $chosen_dir
+        zle reset-prompt
+    fi
+}
+
+autoload fzf_find_dir
+zle -N fzf_find_dir
+
+bindkey '^o' fzf_find_dir
+
 SUDO_EDITOR=/home/tomazgomes/Tools/nvim-linux64/bin//nvim
 export SUDO_EDITOR
 
@@ -369,3 +434,13 @@ export SUDO_EDITOR
 
 export PKG_CONFIG_PATH=/lib/x86_64-linux-gnu/pkgconfig/
 
+export OPENAI_API_KEY=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
+
+function get_lean () {
+    cvc5 $1 --lang=smt --dag-thresh=0 --dump-proofs --proof-granularity=theory-rewrite --proof-format=lean --enum-inst
+}
+
+# opam configuration
+[[ ! -r /home/tomazgomes/.opam/opam-init/init.zsh ]] || source /home/tomazgomes/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
+
+# zprof > /tmp/foo
