@@ -1,24 +1,24 @@
-vim.opt.laststatus = 2
 vim.cmd("colorscheme base16-solarized-light")
+vim.opt.laststatus = 2
 
-local yellow1 = 'b5/89/00'
-local purple1 = 'Purple'
--- local yellow1 = '#d79921'
--- local purple1 = '#b16286'
+local svdColor = '#d5c4a1'
+local bgRight = svdColor
 
-local bg1     = '#ebdbb2'
+local modColor = '#839496'
 
-local fg2 = '#504945'
+local bgMiddle = '#eee8d5'
+
+local textColor = '#504945'
 
 local highlights = {
-    {'SL1',        { bg = '#ebdbb2', fg = '#504945', gui = 'Bold' }},
-    {'SL2',        { bg = bg1,     fg = fg2               }},
-    {'SL3',        { bg = yellow1, fg = fg2               }},
-    {'ArSvd',      { bg = bg1,     fg = yellow1           }},
-    {'ArMod',      { bg = bg1,     fg = purple1           }},
-    {'ArRgt',      { bg = bg1,     fg = yellow1           }},
-    {'BgSvd',      { bg = yellow1                         }},
-    {'BgMod',      { bg = purple1                         }}
+    {'SL1',        { bg = bgMiddle, fg = textColor, gui = 'Bold' }},
+    {'SL2',        { bg = bgMiddle, fg = textColor }},
+    {'SL3',        { bg = bgRight, fg = textColor }},
+    {'ArSvd',      { bg = bgMiddle, fg = svdColor           }},
+    {'ArMod',      { bg = bgMiddle,     fg = modColor           }},
+    {'ArRgt',      { bg = bgMiddle,     fg = bgRight           }},
+    {'BgSvd',      { bg = svdColor                         }},
+    {'BgMod',      { bg = modColor                      }}
                                                           }
 
 local set_hl = function(group, options)
@@ -129,3 +129,4 @@ vim.cmd([[
   autocmd BufEnter,FocusGained,VimEnter,WinEnter * lua focus_window()
   autocmd FocusLost,WinLeave * lua blur_window()
 ]])
+

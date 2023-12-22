@@ -13,17 +13,35 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     "tpope/vim-commentary"
-  -- , { "kylechui/nvim-surround", tag = "*", config = function() require("nvim-surround").setup({}) end }
   , "tpope/vim-surround"
   , "justinmk/vim-dirvish"
   , "nvim-telescope/telescope.nvim"
   , "folke/zen-mode.nvim"
   , "neovimhaskell/haskell-vim"
   , "neovim/nvim-lspconfig"
-  , "hrsh7th/nvim-compe"
+  , "hrsh7th/nvim-cmp"
+  , 'hrsh7th/cmp-nvim-lsp'
+  , 'hrsh7th/cmp-buffer'
+  , 'hrsh7th/cmp-path'
+  , 'hrsh7th/cmp-cmdline'
   , "Julian/lean.nvim"
   , "nvim-lua/plenary.nvim"
   , "andrewradev/switch.vim"
   , "junegunn/vim-easy-align"
+  , "preservim/vim-markdown"
   , { "catppuccin/nvim", name = "catppuccin", priority = 1000 }
+  , {
+      "epwalsh/obsidian.nvim",
+      -- lazy = true,
+      event = {
+          -- "BufReadPre /home/tomazgomes/Vault/Vault/**.md",
+          -- "BufRead    /home/tomazgomes/Vault/Vault/**.md",
+          -- "BufNewFile /home/tomazgomes/Vault/Vault/**.md",
+          "BufNew *" -- hack
+      },
+      dependencies = { "nvim-lua/plenary.nvim" },
+      opts = { dir = "~/Vault/Vault" },
+      open_app_foreground = true
+  }
+  , "jlapolla/vim-coq-plugin"
 })

@@ -16,10 +16,10 @@ if os.getenv("BASE16_THEME") then
     elseif theme == "solarized-light" then
         require("color_base16_solarized-light")
     else
-        require("color_base16_solarized-light")
+        require("color_base16_default-dark")
     end
 else
-    require("color_base16_default-dark")
+    require("color_base16_solarized-light")
 end
 -- }}}
 
@@ -65,9 +65,7 @@ local map = vim.api.nvim_set_keymap
 
 vim.g.mapleader = ","
 
-map("i", "(", "()<left>",    { noremap = true })
-map("i", "[", "[]<left>",    { noremap = true })
-map("i", "\"", "\"\"<left>", { noremap = true })
+map("i", "(", "()<left>",    { noremap = true }) map("i", "[", "[]<left>",    { noremap = true }) map("i", "\"", "\"\"<left>", { noremap = true })
 map("i", "{<CR>", "{<CR><ESC>o}<UP><ESC>a", { noremap = true })
 map("i", "jk", "<Esc>", { noremap = true })
 map("i", "kj", "<Esc>", { noremap = true })
@@ -95,6 +93,7 @@ map("n", "<Leader>R", ":Telescope live_grep<CR>", { silent = true, noremap = tru
 map("n", "<Leader>z", ":ZenMode<CR>", { silent = true, noremap = true })
 map("n", "<Leader>w", ":w<CR>", { silent = true, noremap = true })
 map("n", "<Leader>q", ":q<CR>", { silent = true, noremap = true })
+map("n", "<Leader>O", ":ObsidianQuickSwitch<CR>", { silent = true, noremap = true })
 
 map("n", "<Leader>C", ":!pdflatex -shell-escape main<CR>", { silent = true, noremap = true })
 
@@ -104,6 +103,8 @@ map("x", "\"", "xi\"\"<Esc>P", { noremap = true })
 
 map("x", "ga", "<Plug>(EasyAlign)", { silent = true, noremap = true })
 map("n", "ga", "<Plug>(EasyAlign)", { silent = true, noremap = true })
+
+map("n", "<M-x>", ":<C-f>", { silent = true, noremap = true })
 
 vim.g.maplocalleader = "m"
 
@@ -115,3 +116,7 @@ vim.cmd("autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank { hig
 vim.cmd("autocmd FileType sml setlocal commentstring=(*%s*)")
 
 vim.cmd("set guicursor=n-v-c-i:block")
+
+vim.cmd("let g:vim_markdown_folding_disabled = 1")
+
+vim.cmd("autocmd BufRead *.md lua require('zen-mode').toggle()")

@@ -100,8 +100,8 @@ Statusline = setmetatable(M, {
 })
 
 function blur_window()
-  -- vim.opt_local.colorcolumn = vim.fn.join(vim.fn.range(1, 254), ',')
-  -- vim.opt_local.statusline = Statusline('inactive')
+  vim.opt_local.colorcolumn = vim.fn.join(vim.fn.range(1, 254), ',')
+  vim.opt_local.statusline = Statusline('inactive')
 end
 
 function focus_window()
