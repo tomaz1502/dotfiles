@@ -29,6 +29,7 @@ require("lazy").setup({
   , "andrewradev/switch.vim"
   , "junegunn/vim-easy-align"
   , "preservim/vim-markdown"
+  , "imitator-model-checker/vim-imitator"
   , { "catppuccin/nvim", name = "catppuccin", priority = 1000 }
   , {
       "epwalsh/obsidian.nvim",

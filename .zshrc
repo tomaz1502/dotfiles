@@ -306,11 +306,10 @@ alias vrc="vim ~/.config/nvim/init.lua"
 alias zrc="vim ~/.zshrc"
 alias gco="git checkout"
 
-alias fed="cd /home/tomazgomes/Desktop/Rust/FunctionalEditor"
-
 alias noop=":"
 
-alias vau="cd /home/tomazgomes/Vault/Vault"
+alias ccat="pygmentize -g"
+alias rg="rg --hidden --ignore-case"
 
 # unset PATH
 PATH=$PATH:/bin
@@ -330,7 +329,7 @@ PATH=$PATH:/home/tomazgomes/.elan/lean4/bin/
 PATH=$PATH:/home/tomazgomes/.cabal/bin
 PATH=$PATH:/home/tomazgomes/.ghcup/bin
 PATH=$PATH:/home/tomazgomes/
-PATH=$PATH:/home/tomazgomes/Tools/nvim-linux64/bin/
+PATH=$PATH:/home/tomazgomes/Tools/nvim/usr/bin/
 PATH=$PATH:/home/tomazgomes/.elan/bin
 export PATH    
 
@@ -361,24 +360,35 @@ zle -N fzf_history_search
 bindkey '^r' fzf_history_search
 
 fzf_project() {
-    project=$(echo "prism\nlean-smt\neditor\nlam\nhighlight-lean" | fzf-tmux)
+    project=$(echo "imitator\ncduce\ntiny-sat\nprism\nlean-smt\neditor\nlam\nhighlight-lean" | fzf-tmux)
     case $project in
+        imitator)
+            cd ~/Projects/CNRS/LIPN/imitator/
+        ;;
+        cduce)
+            cd ~/Projects/CNRS/LMF/cduce/
+        ;;
         prism)
-            cd ~/Desktop/Projects/prism/
+            cd ~/Projects/prism/
         ;;
         lean-smt)
-            cd ~/Desktop/Projects/lean-smt/
+            cd ~/Projects/lean-smt/
         ;;
         editor)
-            cd ~/Desktop/Projects/editor/
+            cd ~/Projects/editor/
         ;;
         lam)
-            cd ~/Desktop/Projects/lam/
+            cd ~/Projects/lam/
         ;;
         highlight-lean)
-            cd ~/Vault/Vault/.obsidian/plugins/obsidian-sample-plugin
+            cd ~/Vault/Vault/.obsidian/plugins/obsidian-sample-plugin/
+        ;;
+        tiny-sat)
+            cd ~/Projects/ocaml/TinySAT/
         ;;
     esac
+    zle reset-prompt
+    ls -la
     zle reset-prompt
 }
 
@@ -401,7 +411,9 @@ fzf_switch_session() {
 
     chosen_session=$(echo $session_names | fzf-tmux)
 
-    tmux switch -t $chosen_session
+    if [ -n "$chosen_session" ]; then
+        tmux switch -t $chosen_session
+    fi
 }
 
 autoload fzf_switch_session

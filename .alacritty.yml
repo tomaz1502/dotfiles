@@ -10,21 +10,22 @@
 # to the user's home directory starting with `~/`.
 # import:
 #  - /path/to/alacritty.yml
-  # - ~/.config/alacritty/catppuccin/catppuccin-mocha.yml
-
+# - ~/.config/alacritty/catppuccin/catppuccin-mocha.yml
+#  - ~/.alacritty-colorscheme/themes/gruvbox_light.yaml
+#  - ~/.alacritty-colorscheme/base16-alacritty/colors/base16-solarized-light-256.yml
 # Any items in the `env` entry below will be added as
 # environment variables. Some entries may override variables
 # set by alacritty itself.
-#env:
+# env:
   # TERM variable
   #
   # This value is used to set the `$TERM` environment variable for
   # each instance of Alacritty. If it is not present, alacritty will
   # check the local terminfo database and use `alacritty` if it is
   # available, otherwise `xterm-256color` is used.
-  #TERM: alacritty
+  #  TERM: xterm-256color
 
-#window:
+window:
   # Window dimensions (changes require restart)
   #
   # Number of lines/columns (not pixels) in the terminal. Both lines and columns
@@ -63,7 +64,7 @@
   # Values for `decorations` (macOS only):
   #     - transparent: Title bar, transparent background and title bar buttons
   #     - buttonless: Title bar, transparent background and no title bar buttons
-  #decorations: full
+  decorations: none
 
   # Background opacity
   #
@@ -120,9 +121,9 @@ font:
     #   - (macOS) Menlo
     #   - (Linux/BSD) monospace
     #   - (Windows) Consolas
-    family: FuraMono Nerd Font Mono
-    # family: Sauce Code Pro Nerd Font
-    # family: JetBrains Mono Nerd Font
+    # family: FiraCode Nerd Font
+    family: Sauce Code Pro Nerd Font
+      #family: JetBrains Mono Nerd Font
     # The `style` can be specified to pick a specific face.
     style: Regular
 
@@ -132,9 +133,9 @@ font:
     #
     # If the bold family is not specified, it will fall back to the
     # value specified for the normal font.
-    family: FuraMono Nerd Font Mono
-    # family: Sauce Code Pro Nerd Font
-    # family: JetBrains Mono Nerd Font
+    # family: FiraCode Nerd Font
+    family: Sauce Code Pro Nerd Font
+    #family: JetBrains Mono Nerd Font
 
     # The `style` can be specified to pick a specific face.
     style: Bold
@@ -145,9 +146,9 @@ font:
     #
     # If the italic family is not specified, it will fall back to the
     # value specified for the normal font.
-    family: FuraMono Nerd Font Mono
-    # family: Sauce Code Pro Nerd Font
-    # family: JetBrains Mono Nerd Font
+    # family: FiraCode Nerd Font
+    family: Sauce Code Pro Nerd Font
+    #family: JetBrains Mono Nerd Font
 
     # The `style` can be specified to pick a specific face.
     style: Italic
@@ -164,7 +165,7 @@ font:
     #style: Bold Italic
 
   # Point size
-  size: 18.0
+  size: 14.0
 
   # Offset is the extra space around each character. `offset.y` can be thought
   # of as modifying the line spacing, and `offset.x` as modifying the letter

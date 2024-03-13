@@ -17,6 +17,7 @@
   "vim-coq-plugin": { "branch": "master", "commit": "3c615034198aca1b209ee2fbfb053245857e6e44" },
   "vim-dirvish": { "branch": "master", "commit": "bbf53b30ca1e718625b9b84b1d32379e470ddad7" },
   "vim-easy-align": { "branch": "master", "commit": "12dd6316974f71ce333e360c0260b4e1f81169c3" },
+  "vim-imitator": { "branch": "master", "commit": "5f70626198d58fae31def7203da8bf56a788487e" },
   "vim-markdown": { "branch": "master", "commit": "4e9b4deda11d05a157ab34e97f76089669b5b7af" },
   "vim-surround": { "branch": "master", "commit": "3d188ed2113431cf8dac77be61b842acb64433d9" },
   "zen-mode.nvim": { "branch": "main", "commit": "68f554702de63f4b7b6b6d4bcb10178f41a0acc7" }

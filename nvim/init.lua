@@ -19,7 +19,7 @@ if os.getenv("BASE16_THEME") then
         require("color_base16_default-dark")
     end
 else
-    require("color_base16_solarized-light")
+    require("color_base16_default-dark")
 end
 -- }}}
 
@@ -119,4 +119,4 @@ vim.cmd("set guicursor=n-v-c-i:block")
 
 vim.cmd("let g:vim_markdown_folding_disabled = 1")
 
-vim.cmd("autocmd BufRead *.md lua require('zen-mode').toggle()")
+-- vim.cmd("autocmd BufRead *.md lua require('zen-mode').toggle()")
