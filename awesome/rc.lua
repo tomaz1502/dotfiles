@@ -250,15 +250,11 @@ root.buttons(gears.table.join(
 globalkeys = gears.table.join(
     awful.key({ "Shift" }, "Print", function () awful.spawn.with_shell("maim -s | xclip -selection clipboard -t image/png -i") end),
     awful.key({         }, "Print", function () awful.spawn.with_shell("maim | xclip -selection clipboard -t image/png -i") end),
-    awful.key({ modkey,         }, "z", function () awful.spawn("flatpak run org.zulip.Zulip"); end),
-    awful.key({ modkey,         }, "d", function () awful.spawn("flatpak run com.discordapp.Discord"); end),
-    awful.key({ modkey,         }, "t", function () awful.spawn("telegram-desktop"); end),
-    awful.key({ modkey,         }, "b", function () awful.spawn("firefox"); end),
-    awful.key({ modkey,         }, "e", function () awful.spawn("emacs"); end),
     awful.key({ modkey, "Shift" }, "x", function () awful.spawn.with_shell("i3lock-fancy"); end),
-    awful.key({ modkey, "Shift"  }, "=", function () lain.util.useless_gaps_resize(3) end),
+    -- awful.key({ modkey, "Shift"  }, "=", function () lain.util.useless_gaps_resize(3) end),
+    awful.key({ modkey, "Shift"  }, "=", function () awful.tag.incgap(3) end),
     awful.key({ modkey, "Shift"  }, "-", function () awful.tag.incgap(-3) end),
-    awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
+    awful.key({ modkey, "Shift"  }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
               {description = "view previous", group = "tag"}),
@@ -303,8 +299,6 @@ globalkeys = gears.table.join(
         {description = "go back", group = "client"}),
 
     -- Standard program
-    awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
-              {description = "open a terminal", group = "launcher"}),
     awful.key({ modkey,  }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit,
@@ -372,10 +366,10 @@ clientkeys = gears.table.join(
               {description = "toggle floating", group = "client"}),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
               {description = "move to master", group = "client"}),
-    awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end,
-              {description = "move to screen", group = "client"}),
-    awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
-              {description = "toggle keep on top", group = "client"}),
+    -- awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end,
+    --           {description = "move to screen", group = "client"}),
+    -- awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
+    --           {description = "toggle keep on top", group = "client"}),
     awful.key({ modkey,           }, "n",
         function (c)
             -- The client currently has the input focus, so it cannot be
@@ -400,7 +394,73 @@ clientkeys = gears.table.join(
             c.maximized_horizontal = not c.maximized_horizontal
             c:raise()
         end ,
-        {description = "(un)maximize horizontally", group = "client"})
+        {description = "(un)maximize horizontally", group = "client"}),
+
+    awful.key({ modkey,           }, "Return",
+      function ()
+          local screen = awful.screen.focused()
+          local tag = screen.tags[1]
+          if tag then
+              tag:view_only()
+          end
+      end,
+              {description = "open terminal's tab", group = "launcher"}),
+    awful.key({ modkey,         }, "e",
+      function ()
+          local screen = awful.screen.focused()
+          local tag = screen.tags[2]
+          if tag then
+              tag:view_only()
+          end
+      end),
+    awful.key({ modkey,         }, "b",
+      function ()
+          local screen = awful.screen.focused()
+          local tag = screen.tags[3]
+          if tag then
+              tag:view_only()
+          end
+      end),
+    awful.key({ modkey,         }, "o",
+      function ()
+          local screen = awful.screen.focused()
+          local tag = screen.tags[4]
+          if tag then
+              tag:view_only()
+          end
+      end),
+    awful.key({ modkey,         }, "s",
+      function ()
+          local screen = awful.screen.focused()
+          local tag = screen.tags[5]
+          if tag then
+              tag:view_only()
+          end
+      end),
+    awful.key({ modkey,         }, "z",
+      function ()
+          local screen = awful.screen.focused()
+          local tag = screen.tags[6]
+          if tag then
+              tag:view_only()
+          end
+      end),
+    awful.key({ modkey,         }, "c",
+      function ()
+          local screen = awful.screen.focused()
+          local tag = screen.tags[7]
+          if tag then
+              tag:view_only()
+          end
+      end),
+    awful.key({ modkey,         }, "t",
+      function ()
+          local screen = awful.screen.focused()
+          local tag = screen.tags[9]
+          if tag then
+              tag:view_only()
+          end
+      end)
 )
 
 -- Bind all key numbers to tags.
@@ -471,6 +531,7 @@ clientbuttons = gears.table.join(
 root.keys(globalkeys)
 -- }}}
 
+
 -- {{{ Rules
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
@@ -486,7 +547,14 @@ awful.rules.rules = {
                      placement = awful.placement.no_overlap+awful.placement.no_offscreen
      }
     },
-
+    { rule = { class = "Alacritty" }, properties = { tag = "1" } },
+    { rule = { class = "Emacs" }, properties = { tag = "2" } },
+    { rule = { class = "firefox" }, properties = { tag = "3" } },
+    { rule = { class = "obsidian" }, properties = { tag = "4" } },
+    { rule = { class = "Spotify" }, properties = { tag = "5" } },
+    { rule = { class = "Zulip" }, properties = { tag = "6" } },
+    { rule = { class = "TelegramDesktop" }, properties = { tag = "7" } },
+    { rule = { class = "Gnome-terminal" }, properties = { tag = "9" } },
     -- Floating clients.
     { rule_any = {
         instance = {
@@ -536,6 +604,9 @@ client.connect_signal("manage", function (c)
     -- i.e. put it at the end of others instead of setting it master.
     -- if not awesome.startup then awful.client.setslave(c) end
 
+    -- c.shape = function(cr,w,h)
+    --     gears.shape.rounded_rect(cr,w,h,20)
+    -- end
     if awesome.startup
       and not c.size_hints.user_position
       and not c.size_hints.program_position then
@@ -597,5 +668,18 @@ awful.util.spawn("setxkbmap -layout us,br")
 awful.util.spawn("setxkbmap -option 'grp:alt_shift_toggle'")
 
 awful.spawn.with_shell("feh --bg-fill ~/Pictures/minimal.png")
+awful.spawn.with_shell("xrandr --output eDP-1 --off")
+
+awful.util.spawn("alacritty")
+awful.util.spawn("emacs")
+awful.util.spawn("firefox")
+-- awful.spawn.with_shell("flatpak run md.obsidian.Obsidian")
+-- awful.spawn.with_shell("flatpak run com.spotify.Client")
+-- awful.util.spawn("telegram-desktop")
+-- awful.spawn.with_shell("flatpak run org.zulip.Zulip")
+-- awful.util.spawn("gnome-terminal")
 
 beautiful.useless_gap = 3
+
+-- disable notifications
+-- naughty.connect_signal("request::display", function() end)
