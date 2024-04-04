@@ -45,4 +45,5 @@ require("lazy").setup({
       open_app_foreground = true
   }
   , "jlapolla/vim-coq-plugin"
+  , "axkirillov/easypick.nvim"
 })

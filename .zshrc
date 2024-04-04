@@ -419,7 +419,7 @@ fzf_switch_session() {
 autoload fzf_switch_session
 zle -N fzf_switch_session
 
-bindkey '^t' fzf_switch_session
+bindkey '^[t' fzf_switch_session
 
 fzf_find_dir() {
     dirs=$(find . -type d)

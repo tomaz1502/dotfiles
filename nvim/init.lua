@@ -106,6 +106,25 @@ map("n", "ga", "<Plug>(EasyAlign)", { silent = true, noremap = true })
 
 map("n", "<M-x>", ":<C-f>", { silent = true, noremap = true })
 
+local easypick = require("easypick")
+
+local display_sessions_cmd = [[
+    echo "Babel\nIMITATOR"
+]]
+
+easypick.setup({
+    pickers = {
+        {
+            name    = "tmux_session_switcher",
+            command = "tmux ls",
+            action  = easypick.actions.nvim_commandf("!tmux switch -t $(echo -n \"%s\" | cut -d: -f1)")
+        }
+
+    }
+})
+
+map("n", "<M-t>", ":Easypick tmux_session_switcher<CR>", { silent = true, noremap = true })
+
 vim.g.maplocalleader = "m"
 
 -- TODO vim.api.nvim_set_keymap("c", "<C-p>", "<C-r>\"", { noremap = true })

@@ -97,7 +97,7 @@ local on_attach = require('on_attach')
 
 require'lspconfig'.gopls.setup{ on_attach = on_attach, capabilities = capabilities }
 require'lspconfig'.clangd.setup{ on_attach = on_attach,
-                                 init_options = { fallbackFlags = { "-std=c++17" } },
+                                 -- init_options = { fallbackFlags = { "-std=c++17" } },
                                  capabilities = capabilities
                                }
 require'lspconfig'.pyright.setup{ on_attach = on_attach, capabilities = capabilities }
