@@ -1,5 +1,5 @@
 ;; Basic
-;; 
+ 
 (setq inhibit-startup-message t)
 
 (load-theme 'wombat t)
@@ -12,12 +12,45 @@
 (set-frame-font "Fira Mono" nil t)
 
 (setq scroll-conservatively 101)
-(setq mouse-wheel-scroll-amount '(3 ((shift) . 3))) ;; one line at a time
-(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
-(setq scroll-step 1) ;; keyboard scroll one line at a time
+(setq mouse-wheel-scroll-amount '(3 ((shift) . 3)))
+(setq mouse-wheel-progressive-speed nil)
+(setq mouse-wheel-follow-mouse 't)
+(setq scroll-step 1)
 
-(global-display-line-numbers-mode 1)
+(setq make-backup-files nil)
+
+;; Auxiliary Functions
+
+(setq notes-dir "~/Tomaz/org/")
+
+;; Surprisingly, can't declare both variables in the same let-statement, `files`
+;; would not be in scope.
+(defun find-note ()
+  (interactive)
+  (let ((files (directory-files-recursively notes-dir ".*.org")))
+    (let ((rel-files (mapcar (lambda (file) (file-relative-name file notes-dir)) files)))
+	(ivy-read "Find note: " rel-files
+	  :action (lambda (file) (find-file (expand-file-name file notes-dir))))
+    )
+  )
+)
+
+;; Note: Creates the directory if it does not exist. Does not create the
+;; file if you do not save it. This is to avoid replacing an existing file.
+(defun create-note ()
+  (interactive)
+  (let ((filename (read-string "New note name: ")))
+    (let ((filedir (concat notes-dir (file-name-directory filename))))
+        (unless (file-directory-p filedir) (make-directory filedir t))
+	(find-file (expand-file-name (concat filename ".org") notes-dir))
+      )
+  )
+)
+
+(defun open-notes-dir ()
+    (interactive)
+    (find-file notes-dir)
+)
 
 ;; Package
 
@@ -39,7 +72,7 @@
 (use-package ivy
   :config
     (ivy-mode)
-    (setq ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
+    (setq ivy-re-builders-alist '((t . ivy--regex-fuzzy))) ;; Allow fuzzy-finding on Ivy
 )
 
 (use-package flx
@@ -60,7 +93,8 @@
       "e f"  '(lambda () (interactive) (find-file "~/.emacs.d/init.el"))
       ;; "SPC"  'projectile-find-file
       "f s"  'save-buffer
-      "."  'find-file
+      "."    'find-file
+      "f f"  'find-file
       ;; "f r"  'helm-recentf
       "b l"  'evil-switch-to-windows-last-buffer
       "b b"  'ivy-switch-buffer
@@ -73,9 +107,33 @@
       "w j"  'windmove-down
       "w h"  'windmove-left
       "c c"  'smart-comment
+      "n f"  'find-note
+      "n n"  'create-note
+      "n o"  'open-notes-dir
     )
     (general-nvmap :states '(normal visual) :keymaps 'override :prefix "g"
       "c c" 'smart-comment
+    )
+)
+
+(use-package pdf-tools
+  :defer
+  :config
+    (add-hook 'doc-view-mode-hook
+      (lambda ()
+        (pdf-tools-install)
+      )
+    )
+
+    (add-hook 'pdf-view-mode-hook
+	(lambda ()
+	    (local-set-key (kbd "j")  'pdf-view-next-line-or-next-page)
+	    (local-set-key (kbd "k")  'pdf-view-previous-line-or-previous-page)
+	    (local-set-key (kbd "gg") 'pdf-view-first-page)
+	    (local-set-key (kbd "G")  'pdf-view-last-page)
+	    (local-set-key (kbd "{")  'pdf-view-previous-page-command)
+	    (local-set-key (kbd "}")  'pdf-view-next-page-command)
+	)
     )
 )
 
@@ -108,13 +166,16 @@
 (global-set-key (kbd "M-K") 'enlarge-window)
 (global-set-key (kbd "M-J") 'shrink-window)
 
+(global-set-key (kbd "M-;") 'eval-expression) ; "M-:" is not working, why?
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ispell-dictionary nil)
- '(package-selected-packages '(general flx ivy smartparens use-package evil cmake-mode)))
+ '(package-selected-packages
+   '(pdf-tools general flx ivy smartparens use-package evil cmake-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
