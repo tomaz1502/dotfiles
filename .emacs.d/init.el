@@ -63,7 +63,9 @@
 (setq use-package-always-ensure t)
 
 (use-package evil
-  :config (evil-mode)
+  :config
+    (evil-mode)
+    (define-key evil-insert-state-map "jk" 'evil-normal-state)
 )
 
 (use-package company
@@ -84,18 +86,6 @@
 
 (use-package flx
   :defer) ; help sorting results in Ivy
-
-(use-package key-chord
-  :config
-    (key-chord-mode 1)
-    (add-hook 'evil-mode-hook
-      (lambda ()
-	(if evil-mode
-	  (key-chord-mode 1)
-	  (key-chord-mode -1)
-	)))
-    (key-chord-define-global "jk" 'evil-normal-state)
-  )
 
 (defun smart-comment ()
   "Comment or uncomment region if selected, otherwise comment or uncomment current line."
@@ -125,7 +115,7 @@
       "w k"  'windmove-up
       "w j"  'windmove-down
       "w h"  'windmove-left
-      "c c"  'smart-comment
+      "c c"  'compile
       "n n"  'find-note
       "n c"  'create-note
       "n o"  'open-notes-dir
@@ -200,7 +190,7 @@
  ;; If there is more than one, they won't work right.
  '(ispell-dictionary nil)
  '(package-selected-packages
-   '(company key-chord key-combo pdf-tools general flx ivy smartparens use-package evil cmake-mode)))
+   '(company pdf-tools general flx ivy smartparens use-package evil cmake-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
