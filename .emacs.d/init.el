@@ -1,12 +1,12 @@
 ;; Basic
- 
+
 (setq inhibit-startup-message t)
 
-(load-theme 'wombat t)
+; (load-theme 'wombat t)
 
 (tool-bar-mode -1)
-(menu-bar-mode -1)
 (scroll-bar-mode -1)			;
+(menu-bar-mode -1)
 
 (set-face-attribute 'default nil :height 160)
 (set-frame-font "Fira Mono" nil t)
@@ -18,6 +18,7 @@
 (setq scroll-step 1)
 
 (setq make-backup-files nil)
+(global-display-line-numbers-mode 1)
 
 ;; Auxiliary Functions
 
@@ -65,8 +66,14 @@
   :config (evil-mode)
 )
 
+(use-package company
+  :bind (:map company-active-map
+	      ("<tab>" . company-select-next)
+	      ("<backtab>" . company-select-previous)))
+(global-company-mode t) ; buggy if I do this and the binding withing use-package?
+
 (use-package smartparens
-  :config (smartparens-global-mode t)
+  :config (smartparens-global-mode)
 )
 
 (use-package ivy
@@ -77,6 +84,18 @@
 
 (use-package flx
   :defer) ; help sorting results in Ivy
+
+(use-package key-chord
+  :config
+    (key-chord-mode 1)
+    (add-hook 'evil-mode-hook
+      (lambda ()
+	(if evil-mode
+	  (key-chord-mode 1)
+	  (key-chord-mode -1)
+	)))
+    (key-chord-define-global "jk" 'evil-normal-state)
+  )
 
 (defun smart-comment ()
   "Comment or uncomment region if selected, otherwise comment or uncomment current line."
@@ -107,8 +126,8 @@
       "w j"  'windmove-down
       "w h"  'windmove-left
       "c c"  'smart-comment
-      "n f"  'find-note
-      "n n"  'create-note
+      "n n"  'find-note
+      "n c"  'create-note
       "n o"  'open-notes-dir
     )
     (general-nvmap :states '(normal visual) :keymaps 'override :prefix "g"
@@ -168,6 +187,12 @@
 
 (global-set-key (kbd "M-;") 'eval-expression) ; "M-:" is not working, why?
 
+; (add-to-list 'load-path "/home/tomazgomes/.emacs.d/nano-emacs")
+; (require 'nano)
+
+; (menu-bar-mode -1) ;; why does nano changes this back?
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -175,7 +200,7 @@
  ;; If there is more than one, they won't work right.
  '(ispell-dictionary nil)
  '(package-selected-packages
-   '(pdf-tools general flx ivy smartparens use-package evil cmake-mode)))
+   '(company key-chord key-combo pdf-tools general flx ivy smartparens use-package evil cmake-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
