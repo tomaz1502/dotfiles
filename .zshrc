@@ -1,5 +1,7 @@
-# zmodload zsh/zprof
+# opam configuration
+[[ ! -r /Users/tmascarenhas/.opam/opam-init/init.zsh ]] || source /Users/tmascarenhas/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
 
+# zmodload zsh/zprof
 
 ## Create a hash table for globally stashing variables without polluting main
 ## scope with a bunch of identifiers.
@@ -9,42 +11,13 @@ __TABLE[ITALIC_ON]=$'\e[3m'
 __TABLE[ITALIC_OFF]=$'\e[23m'
 
 #
-# Completion
-#
-
-fpath=($HOME/.zsh/completions $fpath)
-
-autoload -U compinit
-compinit -u
-
-## Make completion:
-
-# Colorize completions using default `ls` colors.
-zstyle ':completion:*' list-colors ''
-
-# Allow completion of ..<Tab> to ../ and beyond.
-zstyle -e ':completion:*' special-dirs '[[ $PREFIX = (../)#(..) ]] && reply=(..)'
-
-# $CDPATH is overpowered (can allow us to jump to 100s of directories) so tends
-# to dominate completion; exclude path-directories from the tag-order so that
-# they will only be used as a fallback if no completions are found.
-zstyle ':completion:*:complete:(cd|pushd):*' tag-order 'local-directories named-directories'
-
-# Categorize completion suggestions with headings:
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*:descriptions' format %F{default}%B%{$__TABLE[ITALIC_ON]%}--- %d ---%{$__TABLE[ITALIC_OFF]%}%b%f
-
-# Enable keyboard navigation of completions in menu
-# (not just tab/shift-tab but cursor keys as well):
-zstyle ':completion:*' menu select
-
-#
 # Prompt
 #
+alias base16_default-dark="$HOME/.zsh/base16-shell/scripts/base16-default-dark.sh"
+alias base16_solarized-light="$HOME/.zsh/base16-shell/scripts/base16-solarized-light.sh"
 
-source /home/tomazgomes/.zsh/base16-shell/profile_helper.sh
-base16_default-dark
-# base16_solarized-light
+# base16_default-dark
+base16_solarized-light
 
 # http://zsh.sourceforge.net/Doc/Release/User-Contributions.html
 autoload -Uz vcs_info
@@ -170,11 +143,6 @@ function fg-bg() {
 zle -N fg-bg
 bindkey '^Z' fg-bg
 
-# Skim
-
-# test -e "$HOME/.zsh/skim/shell/key-bindings.zsh" && source "$HOME/.zsh/skim/shell/key-bindings.zsh"
-test -e "$HOME/.zsh/skim/shell/completion.zsh" && source "$HOME/.zsh/skim/shell/completion.zsh"
-
 #
 # Hooks
 #
@@ -294,13 +262,11 @@ alias :q=exit
 alias :sp='test -n "$TMUX" && tmux split-window'
 alias :vs='test -n "$TMUX" && tmux split-window -h'
 
-alias mutt="neomutt"
-alias vim="nvim" # meh
-alias vi="nvim -u ~/.minimal_vimrc" # without vimrc
+alias vim="nvim"
+# alias vi="nvim -u ~/.minimal_vimrc" # without vimrc
 alias ls="ls --color=always"
 alias ll="ls -l"
 alias fd="fdfind"
-alias cdz="source /home/tomazgomes/Tools/Script/cd_fzf.sh"
 
 alias vrc="vim ~/.config/nvim/init.lua"
 alias zrc="vim ~/.zshrc"
@@ -308,30 +274,25 @@ alias gco="git checkout"
 
 alias noop=":"
 
-alias ccat="pygmentize -g"
-alias rg="rg --hidden --ignore-case"
-
-# unset PATH
-PATH=$PATH:/bin
-PATH=$PATH:$HOME/bin
-PATH=$PATH:$HOME/.zsh/bin
-PATH=$PATH:$HOME/.vim/pack/bundle/opt/vcs-jump/bin
-PATH=$PATH:/usr/local/bin
-PATH=$PATH:/usr/local/sbin
-PATH=$PATH:$HOME/.local/bin
-PATH=$PATH:$HOME/.cargo/bin
+PATH=$PATH:/bin/
+PATH=$PATH:$HOME/bin/
+PATH=$PATH:$HOME/.zsh/bin/
+PATH=$PATH:$HOME/.vim/pack/bundle/opt/vcs-jump/bin/
+PATH=$PATH:/usr/local/bin/
+PATH=$PATH:/usr/local/sbin/
+PATH=$PATH:$HOME/.local/bin/
+PATH=$PATH:$HOME/.cargo/bin/
 PATH=$PATH:/usr/sbin/
-PATH=$PATH:/home/tomazgomes/.cabal/bin/
-#PATH=$PATH:/snap/bin/
+PATH=$PATH:$HOME/.cabal/bin/
 PATH=$PATH:/usr/local/
-PATH=$PATH:/home/tomazgomes/.local/bin
-PATH=$PATH:/home/tomazgomes/.elan/lean4/bin/
-PATH=$PATH:/home/tomazgomes/.cabal/bin
-PATH=$PATH:/home/tomazgomes/.ghcup/bin
-PATH=$PATH:/home/tomazgomes/
-PATH=$PATH:/home/tomazgomes/Tools/nvim/usr/bin/
-PATH=$PATH:/home/tomazgomes/.elan/bin
-export PATH    
+PATH=$PATH:$HOME/.local/bin/
+PATH=$PATH:$HOME/.cabal/bin/
+PATH=$PATH:$HOME/.ghcup/bin/
+PATH=$PATH:$HOME/Tools/nvim-linux64/bin/
+PATH=$PATH:$HOME/.elan/bin/
+PATH=$PATH:/opt/homebrew/bin/
+PATH=$PATH:/Library/TeX/texbin/
+export PATH
 
 export EDITOR="nvim"
 export BROWSER="firefox"
@@ -360,35 +321,18 @@ zle -N fzf_history_search
 bindkey '^r' fzf_history_search
 
 fzf_project() {
-    project=$(echo "imitator\ncduce\ntiny-sat\nprism\nlean-smt\neditor\nlam\nhighlight-lean" | fzf-tmux)
+    project=$(echo "cduce\nimitator\nbabel" | fzf-tmux)
     case $project in
-        imitator)
-            cd ~/Projects/CNRS/LIPN/imitator/
-        ;;
         cduce)
-            cd ~/Projects/CNRS/LMF/cduce/
+            cd ~/Projects/LMF/cduce
         ;;
-        prism)
-            cd ~/Projects/prism/
+        imitator)
+            cd ~/Projects/LIPN/imitator
         ;;
-        lean-smt)
-            cd ~/Projects/lean-smt/
-        ;;
-        editor)
-            cd ~/Projects/editor/
-        ;;
-        lam)
-            cd ~/Projects/lam/
-        ;;
-        highlight-lean)
-            cd ~/Vault/Vault/.obsidian/plugins/obsidian-sample-plugin/
-        ;;
-        tiny-sat)
-            cd ~/Projects/ocaml/TinySAT/
+        babel)
+            cd ~/Projects/IRIF/babel/
         ;;
     esac
-    zle reset-prompt
-    ls -la
     zle reset-prompt
 }
 
@@ -411,15 +355,13 @@ fzf_switch_session() {
 
     chosen_session=$(echo $session_names | fzf-tmux)
 
-    if [ -n "$chosen_session" ]; then
-        tmux switch -t $chosen_session
-    fi
+    tmux switch -t $chosen_session
 }
 
 autoload fzf_switch_session
 zle -N fzf_switch_session
 
-bindkey '^[t' fzf_switch_session
+bindkey '^t' fzf_switch_session
 
 fzf_find_dir() {
     dirs=$(find . -type d)
@@ -435,22 +377,10 @@ zle -N fzf_find_dir
 
 bindkey '^o' fzf_find_dir
 
-SUDO_EDITOR=/home/tomazgomes/Tools/nvim-linux64/bin//nvim
-export SUDO_EDITOR
-
-
-# export PATH=$PATH:/home/tomazgomes/go/bin
-# source /home/tomazgomes/.zsh/zsh-abbr/zsh-abbr.zsh
-
-[ -f "/home/tomazgomes/.ghcup/env" ] && source "/home/tomazgomes/.ghcup/env" # ghcup-env
-
-export PKG_CONFIG_PATH=/lib/x86_64-linux-gnu/pkgconfig/
-
 function get_lean () {
     cvc5 $1 --lang=smt --dag-thresh=0 --dump-proofs --proof-granularity=theory-rewrite --proof-format=lean --enum-inst
 }
 
-# opam configuration
-[[ ! -r /home/tomazgomes/.opam/opam-init/init.zsh ]] || source /home/tomazgomes/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
-
 # zprof > /tmp/foo
+
+[ -f "/Users/tmascarenhas/.ghcup/env" ] && source "/Users/tmascarenhas/.ghcup/env" # ghcup-env
