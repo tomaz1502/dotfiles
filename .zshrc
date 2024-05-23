@@ -1,5 +1,3 @@
-# opam configuration
-[[ ! -r /Users/tmascarenhas/.opam/opam-init/init.zsh ]] || source /Users/tmascarenhas/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
 
 # zmodload zsh/zprof
 
@@ -9,6 +7,37 @@ typeset -A __TABLE
 
 __TABLE[ITALIC_ON]=$'\e[3m'
 __TABLE[ITALIC_OFF]=$'\e[23m'
+
+#
+# Completion
+#
+
+fpath=($HOME/.zsh/completions $fpath)
+
+autoload -U compinit
+compinit -u
+
+## Make completion:
+
+# Colorize completions using default `ls` colors.
+zstyle ':completion:*' list-colors ''
+
+# Allow completion of ..<Tab> to ../ and beyond.
+zstyle -e ':completion:*' special-dirs '[[ $PREFIX = (../)#(..) ]] && reply=(..)'
+
+# $CDPATH is overpowered (can allow us to jump to 100s of directories) so tends
+# to dominate completion; exclude path-directories from the tag-order so that
+# they will only be used as a fallback if no completions are found.
+zstyle ':completion:*:complete:(cd|pushd):*' tag-order 'local-directories named-directories'
+
+# Categorize completion suggestions with headings:
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*:descriptions' format %F{default}%B%{$__TABLE[ITALIC_ON]%}--- %d ---%{$__TABLE[ITALIC_OFF]%}%b%f
+
+# Enable keyboard navigation of completions in menu
+# (not just tab/shift-tab but cursor keys as well):
+zstyle ':completion:*' menu select
+
 
 #
 # Prompt
@@ -294,9 +323,6 @@ PATH=$PATH:/opt/homebrew/bin/
 PATH=$PATH:/Library/TeX/texbin/
 export PATH
 
-export EDITOR="nvim"
-export BROWSER="firefox"
-
 # echo -e -n "\e[4 q"
 # blinking bar cursor
 # echo -e -n "\x1b[\x35 q"
@@ -321,16 +347,31 @@ zle -N fzf_history_search
 bindkey '^r' fzf_history_search
 
 fzf_project() {
-    project=$(echo "cduce\nimitator\nbabel" | fzf-tmux)
+    project=$(echo "imitator\ncduce\ntiny-sat\nprism\nlean-smt\neditor\nlam\nhighlight-lean" | fzf-tmux)
     case $project in
-        cduce)
-            cd ~/Projects/LMF/cduce
-        ;;
         imitator)
-            cd ~/Projects/LIPN/imitator
+            cd ~/Projects/CNRS/LIPN/imitator/
         ;;
-        babel)
-            cd ~/Projects/IRIF/babel/
+        cduce)
+            cd ~/Projects/CNRS/LMF/cduce/
+        ;;
+        prism)
+            cd ~/Projects/prism/
+        ;;
+        lean-smt)
+            cd ~/Projects/lean-smt/
+        ;;
+        editor)
+            cd ~/Projects/editor/
+        ;;
+        lam)
+            cd ~/Projects/lam/
+        ;;
+        highlight-lean)
+            cd ~/Vault/Vault/.obsidian/plugins/obsidian-sample-plugin/
+        ;;
+        tiny-sat)
+            cd ~/Projects/ocaml/TinySAT/
         ;;
     esac
     zle reset-prompt
@@ -381,6 +422,12 @@ function get_lean () {
     cvc5 $1 --lang=smt --dag-thresh=0 --dump-proofs --proof-granularity=theory-rewrite --proof-format=lean --enum-inst
 }
 
+SUDO_EDITOR=/home/tomazgomes/Tools/nvim-linux64/bin//nvim
+export SUDO_EDITOR
+export EDITOR="nvim"
+export BROWSER="firefox"
+
 # zprof > /tmp/foo
 
 [ -f "/Users/tmascarenhas/.ghcup/env" ] && source "/Users/tmascarenhas/.ghcup/env" # ghcup-env
+[[ ! -r /Users/tmascarenhas/.opam/opam-init/init.zsh ]] || source /Users/tmascarenhas/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
